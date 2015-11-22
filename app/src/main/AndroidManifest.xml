@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity
-            android:name="com.sidm.Senseless.Splashpage">
+            android:name="com.sidm.Senseless.Splashpage"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +20,8 @@
         </activity>
 
         <activity
-            android:name="com.sidm.Senseless.Mainmenu">
+            android:name="com.sidm.Senseless.Mainmenu"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +32,8 @@
         </activity>
 
         <activity
-            android:name="com.sidm.Senseless.Gamescreen">
+            android:name="com.sidm.Senseless.Gamescreen"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +44,8 @@
         </activity>
 
         <activity
-            android:name="com.sidm.Senseless.Helpscreen">
+            android:name="com.sidm.Senseless.Helpscreen"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,7 +57,8 @@
 
 
         <activity
-            android:name="com.sidm.Senseless.Optionscreen">
+            android:name="com.sidm.Senseless.Optionscreen"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,7 +69,20 @@
         </activity>
 
         <activity
-            android:name="com.sidm.Senseless.Druginfoscreen">
+            android:name="com.sidm.Senseless.Druginfoscreen"
+            android:screenOrientation="landscape">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name="com.sidm.Senseless.Summaryscreen"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/summary"
+    android:orientation = "horizontal"
+    >
+
+    <Button
+        android:id="@+id/btn_restart"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/retry"
+        android:textSize="17dp"
+        android:textColor="#000800"
+        android:layout_marginTop="230dp"
+        android:layout_marginLeft="200dp" />
+
+    <Button
+        android:id="@+id/btn_main"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/home"
+        android:textSize="17dp"
+        android:textColor="#000800"
+        android:layout_marginTop="230dp"
+        android:layout_marginLeft="350dp" />
+</RelativeLayout>

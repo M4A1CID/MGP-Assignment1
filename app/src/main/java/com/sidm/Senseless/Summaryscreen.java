@@ -6,15 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 /**
- * Created by Edmund on 22/11/2015.
+ * Created by Aloysius Chun on 23/11/2015.
  */
-public class Gamescreen extends Activity implements OnClickListener{
 
-    private Button btn_pause;
+public class  Summaryscreen extends Activity implements View.OnClickListener  {
+
+    private Button btn_restart;
+    private Button btn_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,20 +24,23 @@ public class Gamescreen extends Activity implements OnClickListener{
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);// hide title
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
-        setContentView(R.layout.gamescreen);
+        setContentView(R.layout.summaryscreen);
 
-        btn_pause = (Button)findViewById(R.id.btn_pause);
-        btn_pause.setOnClickListener(this);
+        btn_restart = (Button)findViewById(R.id.btn_restart);
+        btn_restart.setOnClickListener(this);
+
+        btn_main = (Button)findViewById(R.id.btn_main);
+        btn_main.setOnClickListener(this);
 
     }
     public void onClick(View v)
     {
-       Intent intent = new Intent();
+        Intent intent = new Intent();
 
-        if(v==btn_pause)
-        {
-            intent.setClass(this,Summaryscreen.class);
-        }
+        if(v ==  btn_restart)
+            intent.setClass(this,Gamescreen.class);
+        else if(v ==  btn_main)
+            intent.setClass(this,Mainmenu.class);
         startActivity(intent);
     }
 
@@ -53,5 +57,4 @@ public class Gamescreen extends Activity implements OnClickListener{
     {
         super.onDestroy();
     }
-
 }
