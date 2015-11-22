@@ -14,6 +14,8 @@ public class Mainmenu extends Activity implements OnClickListener
 
     private Button btn_start;
     private Button btn_help;
+    private Button btn_option;
+    private Button btn_druginfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,20 +34,28 @@ public class Mainmenu extends Activity implements OnClickListener
         btn_help = (Button)findViewById(R.id.btn_help);
         btn_help.setOnClickListener(this);
 
+        btn_option = (Button)findViewById(R.id.btn_option);
+        btn_option.setOnClickListener(this);
+
+        btn_druginfo = (Button)findViewById(R.id.btn_druginfo);
+        btn_druginfo.setOnClickListener(this);
+
     }
 
     public void onClick(View v)
     {
         Intent intent = new Intent();
 
-        if(v==btn_start)
-        {
+
+
+        if(v == btn_start)
            intent.setClass(this,Gamescreen.class);
-        }
-        else if(v==btn_help)
-        {
+        else if(v == btn_help)
            intent.setClass(this,Helpscreen.class);
-        }
+        else if(v == btn_option)
+            intent.setClass(this,Optionscreen.class);
+        else if(v == btn_druginfo)
+            intent.setClass(this,Druginfoscreen.class);
         startActivity(intent);
     }
 
