@@ -1,4 +1,4 @@
-package com.sidm.practical5;
+package com.sidm.Senseless;
 
 import android.app.Activity;
 import android.content.Intent;

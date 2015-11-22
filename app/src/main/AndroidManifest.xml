@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sidm.practical5" >
+    package="com.sidm.Senseless" >
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity
-            android:name=".Splashpage" >
+            android:name="com.sidm.Senseless.Splashpage"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +20,32 @@
         </activity>
 
         <activity
-            android:name=".Mainmenu" >
+            android:name="com.sidm.Senseless.Mainmenu"
+            android:screenOrientation="landscape">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name="com.sidm.Senseless.Gamescreen"
+            android:screenOrientation="landscape">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name="com.sidm.Senseless.Helpscreen"
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,17 +1,19 @@
-package com.sidm.practical5;
+package com.sidm.Senseless;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
+import android.widget.Button;
 
-/**
- * Created by Edmund on 22/11/2015.
- */
-public class Gamescreen extends Activity implements OnClickListener{
+public class Mainmenu extends Activity implements OnClickListener
+{
+
+    private Button btn_start;
+    private Button btn_help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,22 +22,31 @@ public class Gamescreen extends Activity implements OnClickListener{
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);// hide title
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
-        setContentView(R.layout.gamescreen);
+
+
+        setContentView(R.layout.mainmenu);
+
+        btn_start = (Button)findViewById(R.id.btn_start);
+        btn_start.setOnClickListener(this);
+
+        btn_help = (Button)findViewById(R.id.btn_help);
+        btn_help.setOnClickListener(this);
 
     }
+
     public void onClick(View v)
     {
-       /* Intent intent = new Intent();
+        Intent intent = new Intent();
 
         if(v==btn_start)
         {
-            intent.setClass(this,Gamescreen.class);
+           intent.setClass(this,Gamescreen.class);
         }
         else if(v==btn_help)
         {
-            //TODO intent.setClass(this,HelpPage.class);
+           intent.setClass(this,Helpscreen.class);
         }
-        startActivity(intent);*/
+        startActivity(intent);
     }
 
     protected void onPause()
