@@ -14,7 +14,7 @@ import android.widget.Button;
  */
 public class Gamescreen extends Activity implements OnClickListener{
 
-    private Button btn_pause;
+    //private Button btn_pause;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +23,21 @@ public class Gamescreen extends Activity implements OnClickListener{
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);// hide title
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
-        setContentView(R.layout.gamescreen);
+        setContentView(new GamePanelSurfaceView(this));
 
-        btn_pause = (Button)findViewById(R.id.btn_pause);
-        btn_pause.setOnClickListener(this);
+        //btn_pause = (Button)findViewById(R.id.btn_pause);
+        //btn_pause.setOnClickListener(this);
 
     }
     public void onClick(View v)
     {
        Intent intent = new Intent();
 
-        if(v==btn_pause)
-        {
-            intent.setClass(this,Summaryscreen.class);
-        }
-        startActivity(intent);
+        //if(v==btn_pause)
+        //{
+        //    intent.setClass(this,Summaryscreen.class);
+        //}
+        //startActivity(intent);
     }
 
     protected void onPause()
