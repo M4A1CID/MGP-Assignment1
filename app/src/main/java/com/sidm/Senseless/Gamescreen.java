@@ -1,6 +1,7 @@
 package com.sidm.Senseless;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,12 +33,11 @@ public class Gamescreen extends Activity implements OnClickListener{
     public void onClick(View v)
     {
        Intent intent = new Intent();
-
         //if(v==btn_pause)
         //{
-        //    intent.setClass(this,Summaryscreen.class);
+            intent.setClass(this,Summaryscreen.class);
         //}
-        //startActivity(intent);
+        startActivity(intent);
     }
 
     protected void onPause()

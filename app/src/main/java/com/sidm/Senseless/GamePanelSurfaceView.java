@@ -2,9 +2,12 @@ package com.sidm.Senseless;
 // Note: Differs with your project name
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -13,6 +16,7 @@ import android.view.SurfaceView;
 import android.widget.Space;
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
+
     // Implement this interface to receive information about changes to the surface.
 
     private GameThread myThread = null; // Thread to control the rendering
@@ -106,19 +110,23 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             return;
         }
-        canvas.drawBitmap(scaledbg,bgX,bgY,null);
-        canvas.drawBitmap(scaledbg,bgX + ScreenWidth, bgY, null);
+        canvas.drawBitmap(scaledbg, bgX, bgY, null);
+        canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
 
         // 4d) Draw the spaceships
-        canvas.drawBitmap(Spaceship[SpaceshipIndex],100,100,null);
+        canvas.drawBitmap(Spaceship[SpaceshipIndex], 100, 100, null);
 
         // Bonus) To print FPS on the screen
-
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(20);
+        String s_FPS = "FPS: " + String.valueOf(FPS);
+        canvas.drawText(s_FPS, 10, 25, paint);
     }
 
 
     //Update method to update the game play
-    public void update(float dt, float fps){
+    public void update(float dt, float fps) {
         FPS = fps;
 
         switch (GameState) {
@@ -155,6 +163,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // 5) In event of touch on screen, the spaceship will relocate to the point of touch
 
+        //Test
+        Intent intent = new Intent();
+        //if(v==btn_pause)
+        //{
+        intent.setClass(getContext(),Summaryscreen.class);
+        //}
+        getContext().startActivity(intent);
 
         return super.onTouchEvent(event);
     }

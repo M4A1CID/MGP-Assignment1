@@ -13,7 +13,7 @@ import android.view.WindowManager;
 public class Splashpage extends Activity {
 
     protected boolean _active = true;
-    protected int _splashTime = 2000; // Mini seconds
+    protected int _splashTime = 5000; // Mini seconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
