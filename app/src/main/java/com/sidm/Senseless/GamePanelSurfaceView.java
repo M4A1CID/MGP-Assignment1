@@ -31,6 +31,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap[] Spaceship = new Bitmap[4];
     // 4b) Variable as an index to keep track of the spaceship images
     private short SpaceshipIndex = 0;
+    // Variables used for giant brain
+    private Bitmap bm_Brain,scaled_bm_Brain;
+    private short Brain_X, Brain_Y;
+
 
     // Variables for FPS
     public float FPS;
@@ -55,8 +59,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         ScreenHeight = metrics.heightPixels;
         // 1e)load the image when this class is being instantiated
 
-        bg = BitmapFactory.decodeResource(getResources(),R.drawable.gamescene);
+        bg = BitmapFactory.decodeResource(getResources(), R.drawable.gamescene);
         scaledbg = Bitmap.createScaledBitmap(bg, ScreenWidth, ScreenHeight, true);
+
 
         // 4c) Load the images of the spaceships
         Spaceship[0] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1);
@@ -64,6 +69,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Spaceship[2] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3);
         Spaceship[3] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4);
 
+        // Load the images of the brain
+        bm_Brain = BitmapFactory.decodeResource(getResources(),R.drawable.brain);
+        scaled_bm_Brain = Bitmap.createScaledBitmap(bm_Brain, ScreenWidth / 3, ScreenHeight / 3, true);
+        Brain_X = (short) (ScreenWidth/2 - scaled_bm_Brain.getWidth()/2);
+        Brain_Y = (short) (ScreenHeight - scaled_bm_Brain.getHeight()/2);
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
 
@@ -115,6 +125,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // 4d) Draw the spaceships
         canvas.drawBitmap(Spaceship[SpaceshipIndex], 100, 100, null);
+
+        // Draw the brain
+        canvas.drawBitmap(scaled_bm_Brain,Brain_X,Brain_Y,null);
 
         // Bonus) To print FPS on the screen
         Paint paint = new Paint();
