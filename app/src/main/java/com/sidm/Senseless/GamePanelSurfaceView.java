@@ -42,23 +42,28 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private int theScore;
     private int ScreenWidth, ScreenHeight;
+    private int ScreenWidthCenter, ScreenHeightCenter;
     private int theLevel = 0;
     private int theKillCount = 0;
     private int theSpawnCount = 0;
     private SpriteAnimation stone_anim;
     private GameThread myThread = null; // Thread to control the rendering
-    private Bitmap bg, scaledbg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin; //Bitmaps
+    private Bitmap bg, scaledbg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen; //Bitmaps
     private float DPI, AspectRatioX, AspectRatioY;
     private float PlayerX = 0, PlayerY = 0, PlayerXScale = 0, PlayerYScale = 0;
     private float PlayerScale = 0;
     private float EnemyScale = 0;
     private float SpawnTimer = 0;
     private final float SpawnDelay = 2.f;
+    private float btn_shop_Gamescale = 0.4f;
+    private float btn_shopScreen_Gamescale = 0.5f;
+    private float btn_shop_X,btn_shop_Y;
     public float FPS; // Variables for FPS
     private static final int PlayerArraySize = 3;
     private Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];    //Init player bitmap
     private short PlayerIndex = 0;   //Player bitmap array count
     private short GameState;   // Variable for Game State check
+    private boolean btn_shop_opened = false;
 
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView (Context context){
@@ -73,6 +78,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         ScreenWidth = metrics.widthPixels;
         ScreenHeight = metrics.heightPixels;
+        ScreenWidthCenter = ScreenWidth / 2;
+        ScreenHeightCenter = ScreenHeight / 2;
 
         DPI = metrics.density;
 
@@ -121,6 +128,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         stone_anim = new SpriteAnimation(BitmapFactory.decodeResource(getResources(), R.drawable.flystone), 320, 64, 5, 5);
         stone_anim.setX(300);
         stone_anim.setY(300);
+
+        // Variable for the shop
+        btn_shop = BitmapFactory.decodeResource(getResources(), R.drawable.shop);
+        btn_shop = Bitmap.createScaledBitmap(btn_shop, (int) (AspectRatioY * btn_shop_Gamescale), (int) (AspectRatioY * btn_shop_Gamescale), true);
+        btn_shopScreen = BitmapFactory.decodeResource(getResources(), R.drawable.shop_screen);
+        btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen,  ScreenWidth, ScreenHeight , true);
+        btn_shop_X = ScreenWidth - btn_shop.getWidth();
+        btn_shop_Y = 0;
     }
 
     //must implement inherited abstract methods
@@ -172,6 +187,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         m.postTranslate(rect.left, rect.right);
         bgpaint.getShader().setLocalMatrix(m);
         canvas.drawRect(rect, bgpaint);
+
+
 
         // 4d) Draw the spaceships
         //(ScreenWidth * 0.5f) - (PlayerFace[PlayerIndex].getWidth() * 0.5f), (ScreenHeight * 0.5f) - (PlayerFace[PlayerIndex].getHeight() * 0.5f) - Shift from top left to middle for render
@@ -267,8 +284,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             //canvas.drawText(debugText, 500, 40, paint);
         }
 
+        // Draw GUI
         String Score = "Score: " + String.valueOf(theScore);
         canvas.drawText(Score, ScreenWidth - 150, 25, paint);
+        if(btn_shop_opened)
+            canvas.drawBitmap(btn_shopScreen,0,0,null);
     }
 
     //Update method to update the game play
@@ -374,10 +394,21 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         short X = (short) event.getX();
         short Y = (short) event.getY();
 
-        if ( event.getAction() == MotionEvent.ACTION_DOWN )
+        switch (event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                HandleShopDownPress(X,Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+
+        }
+       /* if ( event.getAction() == MotionEvent.ACTION_DOWN )
         {
             //tap event - shoot
-        }
+        }*
 
 /*        //Test
         Intent intent = new Intent();
@@ -388,6 +419,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         getContext().startActivity(intent);*/
 
         return super.onTouchEvent(event);
+    }
+    public void HandleShopDownPress(short X, short Y)
+    {
+        if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
+        {
+            if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
+            {
+                // Shop button is being pressed
+                System.out.println("Shop button pressed!");
+                btn_shop_opened = true;
+            }
+        }
     }
 
     public boolean CheckCollision(float x1, float y1, float x2, float y2)
