@@ -48,22 +48,28 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private int theSpawnCount = 0;
     private SpriteAnimation stone_anim;
     private GameThread myThread = null; // Thread to control the rendering
-    private Bitmap bg, scaledbg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen; //Bitmaps
+    private Bitmap bg, scaledbg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen, btn_back; //Bitmaps
     private float DPI, AspectRatioX, AspectRatioY;
     private float PlayerX = 0, PlayerY = 0, PlayerXScale = 0, PlayerYScale = 0;
     private float PlayerScale = 0;
     private float EnemyScale = 0;
     private float SpawnTimer = 0;
     private final float SpawnDelay = 2.f;
-    private float btn_shop_Gamescale = 0.4f;
-    private float btn_shopScreen_Gamescale = 0.5f;
-    private float btn_shop_X,btn_shop_Y;
+    
     public float FPS; // Variables for FPS
     private static final int PlayerArraySize = 3;
     private Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];    //Init player bitmap
     private short PlayerIndex = 0;   //Player bitmap array count
     private short GameState;   // Variable for Game State check
+	//Variables for shop
+    private float btn_shop_Gamescale = 0.3f;
+    private float btn_shopScreen_Gamescale = 0.5f;
+    private float btn_shop_X,btn_shop_Y;
     private boolean btn_shop_opened = false;
+
+    //Variables for back button
+    private float btn_back_X, btn_back_Y;
+    private float btn_back_Gamescale= 0.3f;
 
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView (Context context){
@@ -136,6 +142,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen,  ScreenWidth, ScreenHeight , true);
         btn_shop_X = ScreenWidth - btn_shop.getWidth();
         btn_shop_Y = 0;
+
+        //Variable for the back button
+        btn_back = BitmapFactory.decodeResource(getResources(),R.drawable.back);
+        btn_back = Bitmap.createScaledBitmap(btn_back, (int) (AspectRatioY * btn_back_Gamescale), (int) (AspectRatioY * btn_back_Gamescale), true);
+        btn_back_X = ScreenWidth - btn_back.getWidth();
+        btn_back_Y = ScreenHeight - btn_back.getHeight();
+
     }
 
     //must implement inherited abstract methods
@@ -152,8 +165,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Destroy the thread
         if (myThread.isAlive()){
             myThread.startRun(false);
-
-
         }
         boolean retry = true;
         while (retry) {
@@ -287,8 +298,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Draw GUI
         String Score = "Score: " + String.valueOf(theScore);
         canvas.drawText(Score, ScreenWidth - 150, 25, paint);
-        if(btn_shop_opened)
-            canvas.drawBitmap(btn_shopScreen,0,0,null);
+        //Draw the shop button
+        canvas.drawBitmap(btn_shop,btn_shop_X,btn_shop_Y,null);
+        if(btn_shop_opened) { // If player pressed the shop button
+            // Render the shop screen overlay
+            canvas.drawBitmap(btn_shopScreen, 1, 1, null);
+            System.out.println("Showing Shop Screen");
+            canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y,null);
+        }
     }
 
     //Update method to update the game play
