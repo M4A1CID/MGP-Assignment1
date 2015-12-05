@@ -36,11 +36,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // 1b) Define Screen width and Screen height as integer
     int ScreenWidth, ScreenHeight;
     private float DPI, AspectRatioX, AspectRatioY;
-    // 1c) Variables for defining background start and end point
-
+    //Variables for shop
+    private Bitmap btn_shop;
+    private float btn_shop_Gamescale = 0.4f;
     private static final int PlayerArraySize = 3;
     //Init player bitmap
     private Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];
+
    //Player bitmap array count
     private short PlayerIndex = 0;
 
@@ -96,6 +98,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         stone_anim = new SpriteAnimation(BitmapFactory.decodeResource(getResources(), R.drawable.flystone), 320, 64, 5,5);
         stone_anim.setX(300);
         stone_anim.setY(300);
+
+        // Variable for the shop
+        btn_shop = BitmapFactory.decodeResource(getResources(), R.drawable.shop);
+        btn_shop = Bitmap.createScaledBitmap(btn_shop,(int)( AspectRatioY * btn_shop_Gamescale), (int)( AspectRatioY* btn_shop_Gamescale), true);
     }
 
     //must implement inherited abstract methods
@@ -146,6 +152,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
         }
 
+
+
         // 4d) Draw the spaceships
         //(ScreenWidth * 0.5f) - (PlayerFace[PlayerIndex].getWidth() * 0.5f), (ScreenHeight * 0.5f) - (PlayerFace[PlayerIndex].getHeight() * 0.5f) - Shift from top left to middle for render
         // (1,1) (0,0) (0,0)     (0,0) (0,0) (0,0)    1 - co-ords
@@ -163,7 +171,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.drawText(s_FPS, 10, 25, paint);
 
         stone_anim.draw(canvas);
-
+        //Draw the shop button
+        canvas.drawBitmap(btn_shop,ScreenWidth - btn_shop.getWidth(),0,null);
         if ( CheckCollision(mX,mY, stone_anim.getX(),stone_anim.getY()))
         {
             theScore++;
