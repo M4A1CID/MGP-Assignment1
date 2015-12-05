@@ -39,6 +39,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     //Variables for shop
     private Bitmap btn_shop;
     private float btn_shop_Gamescale = 0.4f;
+    private float btn_shop_X,btn_shop_Y;
+
     private static final int PlayerArraySize = 3;
     //Init player bitmap
     private Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];
@@ -101,7 +103,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // Variable for the shop
         btn_shop = BitmapFactory.decodeResource(getResources(), R.drawable.shop);
-        btn_shop = Bitmap.createScaledBitmap(btn_shop,(int)( AspectRatioY * btn_shop_Gamescale), (int)( AspectRatioY* btn_shop_Gamescale), true);
+        btn_shop = Bitmap.createScaledBitmap(btn_shop, (int) (AspectRatioY * btn_shop_Gamescale), (int) (AspectRatioY * btn_shop_Gamescale), true);
+        btn_shop_X = ScreenWidth - btn_shop.getWidth();
+        btn_shop_Y = 0;
     }
 
     //must implement inherited abstract methods
@@ -172,7 +176,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         stone_anim.draw(canvas);
         //Draw the shop button
-        canvas.drawBitmap(btn_shop,ScreenWidth - btn_shop.getWidth(),0,null);
+        canvas.drawBitmap(btn_shop,btn_shop_X,btn_shop_Y,null);
         if ( CheckCollision(mX,mY, stone_anim.getX(),stone_anim.getY()))
         {
             theScore++;
@@ -229,10 +233,21 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         short X = (short) event.getX();
         short Y = (short) event.getY();
 
-        if ( event.getAction() == MotionEvent.ACTION_DOWN )
+        switch (event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                HandleShopDownPress(X,Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+
+        }
+       /* if ( event.getAction() == MotionEvent.ACTION_DOWN )
         {
             //tap event - shoot
-        }
+        }*
 
 /*        //Test
         Intent intent = new Intent();
@@ -243,6 +258,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         getContext().startActivity(intent);*/
 
         return super.onTouchEvent(event);
+    }
+    public void HandleShopDownPress(short X, short Y)
+    {
+        if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
+        {
+            if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
+            {
+                // Shop button is being pressed
+                System.out.println("Shop button pressed!");
+            }
+        }
     }
 
     public boolean CheckCollision(float x1, float y1, float x2, float y2)
