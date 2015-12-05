@@ -23,6 +23,7 @@ android {
             {
                 main.res.srcDirs += 'src/main/res-bg'
                 main.res.srcDirs += 'src/main/res-player'
+                main.res.srcDirs += 'src/main/res-enemies'
             }
 }
 
