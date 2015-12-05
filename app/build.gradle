@@ -18,6 +18,12 @@ android {
     }
     productFlavors {
     }
+
+    sourceSets
+            {
+                main.res.srcDirs += 'src/main/res-bg'
+                main.res.srcDirs += 'src/main/res-player'
+            }
 }
 
 dependencies {

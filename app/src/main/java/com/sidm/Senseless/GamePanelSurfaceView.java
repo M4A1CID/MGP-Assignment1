@@ -15,9 +15,19 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Space;
 
+import java.util.Random;
+
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
     // Implement this interface to receive information about changes to the surface.
+
+    String debugText;
+    Random r = new Random();
+    Paint paint = new Paint();
+
+    int theScore;
+
+    private SpriteAnimation stone_anim;
 
     private GameThread myThread = null; // Thread to control the rendering
 
@@ -25,17 +35,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap bg, scaledbg;
     // 1b) Define Screen width and Screen height as integer
     int ScreenWidth, ScreenHeight;
+    private float DPI, AspectRatioX, AspectRatioY;
     // 1c) Variables for defining background start and end point
-    private short bgX = 0, bgY = 0;
-    // 4a) bitmap array to stores 4 images of the spaceship
-    private Bitmap[] Spaceship = new Bitmap[4];
-    // 4b) Variable as an index to keep track of the spaceship images
-    private short SpaceshipIndex = 0;
+
+    //Init player bitmap
+    private Bitmap[] PlayerFace = new Bitmap[3];
+   //Player bitmap array count
+    private short PlayerIndex = 0;
+
+    private float mX = 0, mY = 0;
 
     // Variables for FPS
     public float FPS;
-    float deltaTime;
-    long dt;
 
     // Variable for Game State check
     private short GameState;
@@ -53,22 +64,33 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         ScreenWidth = metrics.widthPixels;
         ScreenHeight = metrics.heightPixels;
+
+        DPI = metrics.density;
+
+        AspectRatioX = ScreenWidth / DPI;
+        AspectRatioY = ScreenHeight / DPI;
         // 1e)load the image when this class is being instantiated
 
-        bg = BitmapFactory.decodeResource(getResources(),R.drawable.gamescene);
-        scaledbg = Bitmap.createScaledBitmap(bg, ScreenWidth, ScreenHeight, true);
+        //Init the bg
+        bg = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
+        //Scale the bg
+        //scaledbg = Bitmap.createScaledBitmap(bg, ScreenWidth, ScreenHeight, true);
 
         // 4c) Load the images of the spaceships
-        Spaceship[0] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1);
-        Spaceship[1] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2);
-        Spaceship[2] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3);
-        Spaceship[3] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4);
+        PlayerFace[0] = BitmapFactory.decodeResource(getResources(), R.drawable.happy);
+        PlayerFace[0] = Bitmap.createScaledBitmap(PlayerFace[0], (int) AspectRatioY, (int) AspectRatioY, true);
+        PlayerFace[1] = BitmapFactory.decodeResource(getResources(), R.drawable.normal);
+        PlayerFace[2] = BitmapFactory.decodeResource(getResources(), R.drawable.sad);
 
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
 
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
+
+        stone_anim = new SpriteAnimation(BitmapFactory.decodeResource(getResources(), R.drawable.flystone), 320, 64, 5,5);
+        stone_anim.setX(300);
+        stone_anim.setY(300);
     }
 
     //must implement inherited abstract methods
@@ -110,18 +132,52 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             return;
         }
-        canvas.drawBitmap(scaledbg, bgX, bgY, null);
-        canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
+
+        //Tile the bg
+        for ( int i = 0; i < ScreenWidth; i += bg.getWidth())
+        {
+            for ( int j = 0; j < ScreenHeight; j += bg.getHeight()) {
+                canvas.drawBitmap(bg, i, j, null);
+            }
+        }
 
         // 4d) Draw the spaceships
-        canvas.drawBitmap(Spaceship[SpaceshipIndex], 100, 100, null);
+        //(ScreenWidth * 0.5f) - (PlayerFace[PlayerIndex].getWidth() * 0.5f), (ScreenHeight * 0.5f) - (PlayerFace[PlayerIndex].getHeight() * 0.5f) - Shift from top left to middle for render
+        // (1,1) (0,0) (0,0)     (0,0) (0,0) (0,0)    1 - co-ords
+        // (0,0) (0,0) (0,0) ->  (0,0) (1,1) (0,0)    0 - your image
+        // (0,0) (0,0) (0,0)     (0,0) (0,0) (0,0)
+        mX = (ScreenWidth * 0.5f) - (PlayerFace[PlayerIndex].getWidth() * 0.5f);
+        mY = (ScreenHeight * 0.5f) - (PlayerFace[PlayerIndex].getHeight() * 0.5f);
+
+        canvas.drawBitmap(PlayerFace[PlayerIndex],mX ,mY, null);
 
         // Bonus) To print FPS on the screen
-        Paint paint = new Paint();
         paint.setColor(Color.BLACK);
         paint.setTextSize(20);
         String s_FPS = "FPS: " + String.valueOf(FPS);
         canvas.drawText(s_FPS, 10, 25, paint);
+
+        stone_anim.draw(canvas);
+
+        if ( CheckCollision(mX,mY, stone_anim.getX(),stone_anim.getY()))
+        {
+            theScore++;
+            stone_anim.setX(r.nextInt(ScreenWidth - stone_anim.getSpriteWidth()));
+            stone_anim.setY(r.nextInt(ScreenHeight - stone_anim.getSpriteHeight()));
+        }
+        else
+        {
+            debugText = " ";
+            debugText += stone_anim.getX();
+            debugText += ":";
+            debugText += stone_anim.getY();
+
+            canvas.drawText("No Collision", 500, 25, paint);
+            //canvas.drawText(debugText, 500, 40, paint);
+        }
+
+        String Score = "Score: " + String.valueOf(theScore);
+        canvas.drawText(Score, ScreenWidth - 150, 25, paint);
     }
 
 
@@ -132,17 +188,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (GameState) {
             case 0: {
                 // 3) Update the background to allow panning effect
-                bgX -= 500 * dt;
-
-                if ( bgX < -ScreenWidth)
-                {
-                    bgX = 0;
-                }
-
 
                 // 4e) Update the spaceship images / shipIndex so that the animation will occur.
-                SpaceshipIndex++;
-                SpaceshipIndex%=4;
+
+                stone_anim.update(System.currentTimeMillis());
             }
             break;
         }
@@ -163,14 +212,41 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // 5) In event of touch on screen, the spaceship will relocate to the point of touch
 
-        //Test
+        short X = (short) event.getX();
+        short Y = (short) event.getY();
+
+        if ( event.getAction() == MotionEvent.ACTION_DOWN )
+        {
+            //tap event - shoot
+        }
+
+/*        //Test
         Intent intent = new Intent();
         //if(v==btn_pause)
         //{
         intent.setClass(getContext(),Summaryscreen.class);
         //}
-        getContext().startActivity(intent);
+        getContext().startActivity(intent);*/
 
         return super.onTouchEvent(event);
+    }
+
+    public boolean CheckCollision(float x1, float y1, float x2, float y2)
+    {
+        double xDiff = (x1 + (PlayerFace[PlayerIndex].getWidth()/2) - (x2 + (stone_anim.getSpriteWidth()/2)));
+        double yDiff = (y1 + (PlayerFace[PlayerIndex].getHeight()/2) - (y2 + (stone_anim.getSpriteHeight()/2)));
+        double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+
+        double scale = PlayerFace[PlayerIndex].getWidth()/2;
+        //double scale = Spaceship[SpaceshipIndex].getWidth()/2;
+
+        if ( scale > distance )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
