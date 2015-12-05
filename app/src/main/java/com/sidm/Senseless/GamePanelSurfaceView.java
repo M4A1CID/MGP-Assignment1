@@ -38,8 +38,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private float DPI, AspectRatioX, AspectRatioY;
     // 1c) Variables for defining background start and end point
 
+    private static final int PlayerArraySize = 3;
     //Init player bitmap
-    private Bitmap[] PlayerFace = new Bitmap[3];
+    private Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];
    //Player bitmap array count
     private short PlayerIndex = 0;
 
@@ -78,9 +79,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // 4c) Load the images of the spaceships
         PlayerFace[0] = BitmapFactory.decodeResource(getResources(), R.drawable.happy);
-        PlayerFace[0] = Bitmap.createScaledBitmap(PlayerFace[0], (int) AspectRatioY, (int) AspectRatioY, true);
         PlayerFace[1] = BitmapFactory.decodeResource(getResources(), R.drawable.normal);
         PlayerFace[2] = BitmapFactory.decodeResource(getResources(), R.drawable.sad);
+
+        for ( int i = 0; i < PlayerArraySize; ++i)
+        {
+            PlayerFace[i] = Bitmap.createScaledBitmap(PlayerFace[i], (int) AspectRatioY, (int) AspectRatioY, true);
+        }
 
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
