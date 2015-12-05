@@ -35,11 +35,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap bg, scaledbg;
     // 1b) Define Screen width and Screen height as integer
     int ScreenWidth, ScreenHeight;
+    int ScreenWidthCenter, ScreenHeightCenter;
     private float DPI, AspectRatioX, AspectRatioY;
     //Variables for shop
-    private Bitmap btn_shop;
+    private Bitmap btn_shop, btn_shopScreen;
     private float btn_shop_Gamescale = 0.4f;
+    private float btn_shopScreen_Gamescale = 0.5f;
     private float btn_shop_X,btn_shop_Y;
+    private boolean btn_shop_opened = false;
+
+    //Variables for back button
 
     private static final int PlayerArraySize = 3;
     //Init player bitmap
@@ -69,6 +74,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         ScreenWidth = metrics.widthPixels;
         ScreenHeight = metrics.heightPixels;
+        ScreenWidthCenter = ScreenWidth / 2;
+        ScreenHeightCenter = ScreenHeight / 2;
 
         DPI = metrics.density;
 
@@ -104,6 +111,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Variable for the shop
         btn_shop = BitmapFactory.decodeResource(getResources(), R.drawable.shop);
         btn_shop = Bitmap.createScaledBitmap(btn_shop, (int) (AspectRatioY * btn_shop_Gamescale), (int) (AspectRatioY * btn_shop_Gamescale), true);
+        btn_shopScreen = BitmapFactory.decodeResource(getResources(), R.drawable.shop_screen);
+        btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen,  ScreenWidth, ScreenHeight , true);
         btn_shop_X = ScreenWidth - btn_shop.getWidth();
         btn_shop_Y = 0;
     }
@@ -194,8 +203,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             //canvas.drawText(debugText, 500, 40, paint);
         }
 
+        // Draw GUI
         String Score = "Score: " + String.valueOf(theScore);
         canvas.drawText(Score, ScreenWidth - 150, 25, paint);
+        if(btn_shop_opened)
+            canvas.drawBitmap(btn_shopScreen,0,0,null);
     }
 
 
@@ -267,6 +279,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             {
                 // Shop button is being pressed
                 System.out.println("Shop button pressed!");
+                btn_shop_opened = true;
             }
         }
     }
