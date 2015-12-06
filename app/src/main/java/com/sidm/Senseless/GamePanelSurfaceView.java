@@ -46,30 +46,36 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     Maths myMath = new Maths();
     PlayerClass thePlayer = new PlayerClass();
 
-    private int theScore;
+    private int theScore = 0;
     private int ScreenWidth, ScreenHeight;
     private int ScreenWidthCenter, ScreenHeightCenter;
     private int theLevel = 1;
-    private int theKillCount = 0;
+    private int theKillCount = 18;
     private int theSpawnCount = 0;
     private int theBulletCount = 0;
     private final int smoke_frame_count = 5;
     private GameThread myThread = null; // Thread to control the rendering
-    private Bitmap bg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen, bullet, smoke_resize; //Bitmaps
+    private Bitmap bg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen, bullet, smoke_resize, btn_back; //Bitmaps
     private float DPI, AspectRatioX, AspectRatioY;
     private float EnemyScale = 0;
     private float BulletScaleX;
     private float BulletScaleY;
     private float SpawnTimer = 0;
     private final float SpawnDelay = 2.f;
-    private float btn_shop_Gamescale = 0.4f;
-    private float btn_shopScreen_Gamescale = 0.5f;
-    private float btn_shop_X,btn_shop_Y;
+    
     public float FPS; // Variables for FPS
     private SpriteAnimation smoke_anim;
 
     private short GameState;   // Variable for Game State check
+	//Variables for shop
+    private float btn_shop_Gamescale = 0.3f;
+    private float btn_shopScreen_Gamescale = 0.5f;
+    private float btn_shop_X,btn_shop_Y;
     private boolean btn_shop_opened = false;
+
+    //Variables for back button
+    private float btn_back_X, btn_back_Y;
+    private float btn_back_Gamescale= 0.3f;
 
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView (Context context){
@@ -114,7 +120,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         bullet = Bitmap.createScaledBitmap(bullet, (int) BulletScaleX, (int) BulletScaleY, true);
 
         float SmokeScaleX = AspectRatioX;
-        float SmokeScaleY = AspectRatioY * 0.6f;
+        float SmokeScaleY = AspectRatioY * 0.3f;
         smoke_resize = BitmapFactory.decodeResource(getResources(), R.drawable.smoke);
         smoke_resize = Bitmap.createScaledBitmap(smoke_resize, (int)SmokeScaleX , (int)SmokeScaleY, true);
         smoke_anim = new SpriteAnimation(smoke_resize, 320, 64, 5, smoke_frame_count);
@@ -152,6 +158,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen,  ScreenWidth, ScreenHeight , true);
         btn_shop_X = ScreenWidth - btn_shop.getWidth();
         btn_shop_Y = 0;
+
+        //Variable for the back button
+        btn_back = BitmapFactory.decodeResource(getResources(),R.drawable.back);
+        btn_back = Bitmap.createScaledBitmap(btn_back, (int) (AspectRatioY * btn_back_Gamescale), (int) (AspectRatioY * btn_back_Gamescale), true);
+        btn_back_X = ScreenWidth - btn_back.getWidth();
+        btn_back_Y = ScreenHeight - btn_back.getHeight();
+
     }
 
     //must implement inherited abstract methods
@@ -168,8 +181,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Destroy the thread
         if (myThread.isAlive()){
             myThread.startRun(false);
-
-
         }
         boolean retry = true;
         while (retry) {
@@ -190,50 +201,50 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public void RenderEnemy(Canvas canvas) {
         for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
         {
-            float theEnemyX;
-            float theEnemyY;
-
             Enemy theEnemy = enemyMap.getValue();
+
+            float theEnemyX = theEnemy.getM_PosX();
+            float theEnemyY = theEnemy.getM_PosY();
 
             switch (enemyMap.getValue().getM_ID())
             {
                 case 0:
-                    theEnemyX = theEnemy.getM_PosX() - (Cannabis.getWidth() * 0.5f);
-                    theEnemyY = theEnemy.getM_PosY() - (Cannabis.getHeight() * 0.5f);
+                    theEnemyX -= (Cannabis.getWidth() * 0.5f);
+                    theEnemyY -= (Cannabis.getHeight() * 0.5f);
                     canvas.save();
                     canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
                     canvas.drawBitmap(Cannabis, theEnemyX, theEnemyY, null);
                     canvas.restore();
                     break;
                 case 1:
-                    theEnemyX = theEnemy.getM_PosX() - (Cocaine.getWidth() * 0.5f);
-                    theEnemyY = theEnemy.getM_PosY() - (Cocaine.getHeight() * 0.5f);
+                    theEnemyX -= (Cocaine.getWidth() * 0.5f);
+                    theEnemyY -= (Cocaine.getHeight() * 0.5f);
                     canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemyX, theEnemyY);
+                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
                     canvas.drawBitmap(Cocaine, theEnemyX, theEnemyY, null);
                     canvas.restore();
                     break;
                 case 2:
-                    theEnemyX = theEnemy.getM_PosX() - (Ketamine.getWidth() * 0.5f);
-                    theEnemyY = theEnemy.getM_PosY() - (Ketamine.getHeight() * 0.5f);
+                    theEnemyX -= (Ketamine.getWidth() * 0.5f);
+                    theEnemyY -= (Ketamine.getHeight() * 0.5f);
                     canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemyX, theEnemyY);
+                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
                     canvas.drawBitmap(Ketamine, theEnemyX, theEnemyY, null);
                     canvas.restore();
                     break;
                 case 3:
-                    theEnemyX = theEnemy.getM_PosX() - (Ecstasy.getWidth() * 0.5f);
-                    theEnemyY = theEnemy.getM_PosY() - (Ecstasy.getHeight() * 0.5f);
+                    theEnemyX -= (Ecstasy.getWidth() * 0.5f);
+                    theEnemyY -= (Ecstasy.getHeight() * 0.5f);
                     canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemyX, theEnemyY);
+                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
                     canvas.drawBitmap(Ecstasy, theEnemyX, theEnemyY, null);
                     canvas.restore();
                     break;
                 case 4:
-                    theEnemyX = theEnemy.getM_PosX() - (Heroin.getWidth() * 0.5f);
-                    theEnemyY = theEnemy.getM_PosY() - (Heroin.getHeight() * 0.5f);
+                    theEnemyX -= (Heroin.getWidth() * 0.5f);
+                    theEnemyY -= (Heroin.getHeight() * 0.5f);
                     canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemyX, theEnemyY);
+                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
                     canvas.drawBitmap(Heroin, theEnemyX, theEnemyY, null);
                     canvas.restore();
                     break;
@@ -300,6 +311,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         String Level = "Level: ";
         Level += theLevel;
         canvas.drawText(Level, 500, 25, paint);
+
+        //Draw the shop button
+        if(btn_shop_opened) { // If player pressed the shop button
+            // Render the shop screen overlay
+            canvas.drawBitmap(btn_shopScreen, 1, 1, null);
+            canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y,null);
+        }
     }
 
     public void RenderGameplay(Canvas canvas) {
@@ -441,15 +459,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                             {
                                 float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
                                 float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
-                                smoke_anim.setX((int)offsetX);
-                                smoke_anim.setY((int)offsetY);
+                                smoke_anim.setX((int) offsetX);
+                                smoke_anim.setY((int) offsetY);
                                 animcache.put(theIT.getM_Name(), smoke_anim);
 
                                 System.out.println(animcache.size());
 
-                                cache.remove(theIT.getM_Name());
-                                theScore++;
+                                theScore += theIT.getM_ScoreWorth();
                                 theKillCount++;
+                                
+                                cache.remove(theIT.getM_Name());
+
+
 
                                 //Level increase
                                if ( theKillCount >= 20)
@@ -508,9 +529,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         return super.onTouchEvent(event);
     }
-
-    public void HandleShopDownPress(short X, short Y) {
-        if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
+    public void HandleShopDownPress(short X, short Y)
+    {
+        if(!btn_shop_opened)
+            if( X > thePlayer.getM_PlayerXScale() && X < thePlayer.getM_PlayerXScale() + thePlayer.PlayerFace[thePlayer.getPlayerIndex()].getWidth()) // Check if within X + width
+            {
+                if (Y > thePlayer.getM_PlayerYScale() && Y < thePlayer.getM_PlayerYScale() + thePlayer.PlayerFace[thePlayer.getPlayerIndex()].getHeight()) // Check if within Y + height
+                {
+                    // Shop button is being pressed
+                    System.out.println("Shop button pressed!");
+                    btn_shop_opened = true;
+                }
+            }
+        /*if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
         {
             if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
             {
@@ -518,7 +549,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 System.out.println("Shop button pressed!");
                 btn_shop_opened = true;
             }
-        }
+        }*/
+
+        if(btn_shop_opened) // Only allow interaction with back button when shop is open
+         if( X > btn_back_X && X < btn_back_X + btn_back.getWidth()) // Check if within X + width
+         {
+                if (Y > btn_back_Y && Y < btn_back_Y + btn_back.getHeight()) // Check if within Y + height
+                {
+                   // Shop button is being pressed
+                    System.out.println("Back button pressed!");
+                    btn_shop_opened = false;
+             }
+         }
     }
 
     public void HandleBulletShoot(short x, short y)
