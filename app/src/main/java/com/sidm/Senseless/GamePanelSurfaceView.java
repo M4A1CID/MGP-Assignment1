@@ -303,7 +303,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         if(btn_shop_opened) { // If player pressed the shop button
             // Render the shop screen overlay
             canvas.drawBitmap(btn_shopScreen, 1, 1, null);
-            System.out.println("Showing Shop Screen");
             canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y,null);
         }
     }
@@ -439,6 +438,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
     public void HandleShopDownPress(short X, short Y)
     {
+        if(!btn_shop_opened)
         if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
         {
             if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
@@ -448,6 +448,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 btn_shop_opened = true;
             }
         }
+
+        if(btn_shop_opened) // Only allow interaction with back button when shop is open
+         if( X > btn_back_X && X < btn_back_X + btn_back.getWidth()) // Check if within X + width
+         {
+                if (Y > btn_back_Y && Y < btn_back_Y + btn_back.getHeight()) // Check if within Y + height
+                {
+                   // Shop button is being pressed
+                    System.out.println("Back button pressed!");
+                    btn_shop_opened = false;
+             }
+         }
     }
 
     public boolean CheckCollision(float x1, float y1, float x2, float y2)
