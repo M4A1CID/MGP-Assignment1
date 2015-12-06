@@ -8,7 +8,7 @@ import android.graphics.Bitmap;
 public class PlayerClass {
 
     int m_HealthPoints = 3;
-    int m_Damage;
+    int m_Damage = 1;
     int m_Score;
     int m_Gold;
     int m_Type_1_Upgrade_Level;

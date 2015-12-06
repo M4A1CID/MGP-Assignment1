@@ -50,7 +50,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private int ScreenWidth, ScreenHeight;
     private int ScreenWidthCenter, ScreenHeightCenter;
     private int theLevel = 1;
-    private int theKillCount = 18;
+    private int theKillCount = 0;
     private int theSpawnCount = 0;
     private int theBulletCount = 0;
     private final int smoke_frame_count = 5;
@@ -480,7 +480,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                         if ( CheckCollision(xDiff,yDiff,theScale) )
                         {
-                            theIT.setM_HP(theBullet.getM_Damage());
+                            theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
                             bulletcache.remove(theBullet.getM_Name());
 
                             if ( theIT.getM_HP() <= 0)
