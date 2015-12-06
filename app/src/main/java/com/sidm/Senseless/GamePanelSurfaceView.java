@@ -299,7 +299,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         String Score = "Score: " + String.valueOf(theScore);
         canvas.drawText(Score, ScreenWidth - 150, 25, paint);
         //Draw the shop button
-        canvas.drawBitmap(btn_shop,btn_shop_X,btn_shop_Y,null);
+        //dcanvas.drawBitmap(btn_shop,btn_shop_X,btn_shop_Y,null);
         if(btn_shop_opened) { // If player pressed the shop button
             // Render the shop screen overlay
             canvas.drawBitmap(btn_shopScreen, 1, 1, null);
@@ -439,7 +439,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public void HandleShopDownPress(short X, short Y)
     {
         if(!btn_shop_opened)
-        if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
+            if( X > PlayerXScale && X < PlayerXScale + PlayerFace[PlayerIndex].getWidth()) // Check if within X + width
+            {
+                if (Y > PlayerYScale && Y < PlayerYScale + PlayerFace[PlayerIndex].getHeight()) // Check if within Y + height
+                {
+                    // Shop button is being pressed
+                    System.out.println("Shop button pressed!");
+                    btn_shop_opened = true;
+                }
+            }
+        /*if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
         {
             if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
             {
@@ -447,7 +456,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 System.out.println("Shop button pressed!");
                 btn_shop_opened = true;
             }
-        }
+        }*/
 
         if(btn_shop_opened) // Only allow interaction with back button when shop is open
          if( X > btn_back_X && X < btn_back_X + btn_back.getWidth()) // Check if within X + width
