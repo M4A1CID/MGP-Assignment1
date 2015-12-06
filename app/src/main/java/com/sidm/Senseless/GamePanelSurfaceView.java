@@ -354,7 +354,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 temp = "Cannabis_";
                 temp += theSpawnCount;
 
-                enemy_Cannabis.Init(temp,10.0f,theLevel,theLevel,theLevel,0,
+                enemy_Cannabis.Init(temp,20.0f,theLevel,theLevel,theLevel,0,
                         myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
                         thePlayer.getM_PosX(),thePlayer.getM_PosY());
                 cache.put(temp,enemy_Cannabis);
@@ -364,7 +364,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 enemy_Cocaine = new Enemy();
                 temp = "Cocaine_";
                 temp += theSpawnCount;
-                enemy_Cocaine.Init(temp,20.0f,theLevel * 2,theLevel * 2,theLevel * 2,1,
+                enemy_Cocaine.Init(temp,40.0f,theLevel * 2,theLevel * 2,theLevel * 2,1,
                         myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
                         thePlayer.getM_PosX(),thePlayer.getM_PosY());
                 cache.put(temp,enemy_Cocaine);
@@ -374,7 +374,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 enemy_Ketamine = new Enemy();
                 temp = "Ketamine_";
                 temp += theSpawnCount;
-                enemy_Ketamine.Init(temp,10.0f,theLevel * 2.5f,theLevel * 2.5f,theLevel * 2.5f,2,
+                enemy_Ketamine.Init(temp,20.0f,theLevel * 2.5f,theLevel * 2.5f,theLevel * 2.5f,2,
                         myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
                         thePlayer.getM_PosX(),thePlayer.getM_PosY());
                 cache.put(temp,enemy_Ketamine);
@@ -384,7 +384,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 enemy_Ecstasy = new Enemy();
                 temp = "Ecstasy_";
                 temp += theSpawnCount;
-                enemy_Ecstasy.Init(temp,30.0f,theLevel / 2,theLevel / 2,theLevel / 2,3,
+                enemy_Ecstasy.Init(temp,60.0f,theLevel / 2,theLevel / 2,theLevel / 2,3,
                         myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
                         thePlayer.getM_PosX(),thePlayer.getM_PosY());
                 cache.put(temp,enemy_Ecstasy);
@@ -394,7 +394,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 enemy_Heroin = new Enemy();
                 temp = "Heroin_";
                 temp += theSpawnCount;
-                enemy_Heroin.Init(temp,25.0f,theLevel * 1.5f,theLevel * 1.5f,theLevel * 1.5f,4,
+                enemy_Heroin.Init(temp,50.0f,theLevel * 1.5f,theLevel * 1.5f,theLevel * 1.5f,4,
                         myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
                         thePlayer.getM_PosX(),thePlayer.getM_PosY());
                 cache.put(temp,enemy_Heroin);
@@ -433,6 +433,34 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
                 {
                     enemyMap.getValue().update(dt);
+
+                    Enemy theIT = enemyMap.getValue();
+
+                    float xDiff = thePlayer.getM_PosX() - theIT.getM_PosX();
+                    float yDiff = thePlayer.getM_PosY() - theIT.getM_PosY();
+
+                    float theScale = thePlayer.getM_PlayerScale() * 0.55f;
+
+                    if ( CheckCollision(xDiff,yDiff,theScale) )
+                    {
+                        cache.remove(theIT.getM_Name());
+                        if ( thePlayer.getM_HealthPoints() > 1) {
+                            thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
+                            thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
+                        }
+                        else
+                        {
+                            //Trigger game over
+                            //Test
+                            Intent intent = new Intent();
+                            //if(v==btn_pause)
+                            //{
+                            intent.setClass(getContext(),Mainmenu.class);
+                            //}
+                            getContext().startActivity(intent);
+                        }
+                    }
+
                 }
                 //Update bullets
                 for (Map.Entry<String, Bullet> bulletMap: bulletcache.entrySet())
@@ -467,7 +495,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                                 theScore += theIT.getM_ScoreWorth();
                                 theKillCount++;
-                                
+
                                 cache.remove(theIT.getM_Name());
 
 
@@ -519,13 +547,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         }
 
-/*        //Test
-        Intent intent = new Intent();
-        //if(v==btn_pause)
-        //{
-        intent.setClass(getContext(),Summaryscreen.class);
-        //}
-        getContext().startActivity(intent);*/
+
 
         return super.onTouchEvent(event);
     }

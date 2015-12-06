@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  */
 public class PlayerClass {
 
-    int m_HealthPoints;
+    int m_HealthPoints = 3;
     int m_Damage;
     int m_Score;
     int m_Gold;
@@ -20,8 +20,10 @@ public class PlayerClass {
     float m_PlayerXScale = 0;
     float m_PlayerYScale = 0;
     float m_PlayerScale;
-
     private static final int PlayerArraySize = 3;
+    private int PlayerIndex = PlayerArraySize - m_HealthPoints ;   //Player bitmap array count
+
+
     public Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];    //Init player bitmap
 
     public float getM_Time_Attack_Delay() {
@@ -132,13 +134,13 @@ public class PlayerClass {
         return PlayerArraySize;
     }
 
-    public short getPlayerIndex() {
+    public int getPlayerIndex() {
         return PlayerIndex;
     }
 
-    public void setPlayerIndex(short playerIndex) {
+    public void setPlayerIndex(int playerIndex) {
         PlayerIndex = playerIndex;
     }
 
-    private short PlayerIndex = 0;   //Player bitmap array count
+
 }
