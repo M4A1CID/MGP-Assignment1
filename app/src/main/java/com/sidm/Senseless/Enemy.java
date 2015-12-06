@@ -142,16 +142,18 @@ public class Enemy {
 
     public void update(double dt)
     {
-        m_VelocityX = m_TargetPosX - m_PosX;
-        m_VelocityY = m_TargetPosY - m_PosY;
+        this.m_VelocityX = this.m_TargetPosX - this.m_PosX;
+        this.m_VelocityY = this.m_TargetPosY - this.m_PosY;
+
+        float theLength = myMath.Length(this.m_VelocityX,this.m_VelocityY);
 
         //Normalise
-        m_VelocityX /= myMath.Length(m_VelocityX,m_VelocityY);
-        m_VelocityY /= myMath.Length(m_VelocityX,m_VelocityY);
+        this.m_VelocityX /= theLength;
+        this.m_VelocityY /= theLength;
 
-        m_PosX += m_VelocityX * m_MovementSpeed * dt;
-        m_PosY += m_VelocityY * m_MovementSpeed * dt;
+        this.m_PosX += this.m_VelocityX * this.m_MovementSpeed * dt;
+        this.m_PosY += this.m_VelocityY * this.m_MovementSpeed * dt;
 
-        m_Rotation = (float)Math.toDegrees(Math.atan2(m_VelocityY,m_VelocityX));
+        this.m_Rotation = (float)Math.toDegrees(Math.atan2(this.m_VelocityY,this.m_VelocityX));
     }
 }
