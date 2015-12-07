@@ -305,12 +305,20 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         String s_FPS = "FPS: " + String.valueOf(FPS);
         canvas.drawText(s_FPS, 25, 25, paint);
 
-        String Score = "Score: " + String.valueOf(theScore);
+        String Score = "Score: " + String.valueOf(thePlayer.getM_Score());
         canvas.drawText(Score, ScreenWidth - 150, 25, paint);
 
         String Level = "Level: ";
         Level += theLevel;
         canvas.drawText(Level, 500, 25, paint);
+
+        //Draw the player's current amount of Gold
+        String Gold = "Gold: " + String.valueOf(thePlayer.getM_Gold());
+        canvas.drawText(Gold, ScreenWidth - 150, 50, paint);
+
+        //Draw the player;'s current Gold Multiplyer
+        String multiplyer = "G-Multi: x" + String.valueOf(thePlayer.getM_Gold_Multiplyer_Level());
+        canvas.drawText(multiplyer, ScreenWidth - 150, 75, paint);
 
         //Draw the shop button
         if(btn_shop_opened) { // If player pressed the shop button
@@ -493,7 +501,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                                 System.out.println(animcache.size());
 
-                                theScore += theIT.getM_ScoreWorth();
+                                thePlayer.setM_Score(thePlayer.getM_Score() + (int) theIT.getM_ScoreWorth());
+                                thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
                                 theKillCount++;
 
                                 cache.remove(theIT.getM_Name());
@@ -563,25 +572,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     btn_shop_opened = true;
                 }
             }
-        /*if( X > btn_shop_X && X < btn_shop_X + btn_shop.getWidth()) // Check if within X + width
-        {
-            if (Y > btn_shop_Y && Y < btn_shop_Y + btn_shop.getHeight()) // Check if within Y + height
-            {
-                // Shop button is being pressed
-                System.out.println("Shop button pressed!");
-                btn_shop_opened = true;
-            }
-        }*/
 
         if(btn_shop_opened) // Only allow interaction with back button when shop is open
-         if( X > btn_back_X && X < btn_back_X + btn_back.getWidth()) // Check if within X + width
+         if( CheckTouchCollisionImage(X,Y,btn_back,btn_back_X,btn_back_Y))
          {
-                if (Y > btn_back_Y && Y < btn_back_Y + btn_back.getHeight()) // Check if within Y + height
-                {
                    // Shop button is being pressed
                     System.out.println("Back button pressed!");
                     btn_shop_opened = false;
-             }
          }
     }
 
@@ -601,6 +598,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    public boolean CheckTouchCollisionImage(short inputX, short inputY, Bitmap image, float imageX, float imageY)
+    {
+        if( inputX > imageX && inputX < imageX + image.getWidth()) // Check if within X + width
+        {
+            if (inputY > imageY && inputY < imageY + image.getHeight()) // Check if within Y + height
+            {
+                // image is being pressed
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean CheckCollision(float xDiff, float yDiff, float theScale) {
         double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 
