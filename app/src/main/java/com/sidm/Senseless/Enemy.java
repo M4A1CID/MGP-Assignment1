@@ -7,6 +7,7 @@ public class Enemy {
 
     Maths myMath = new Maths();
     String m_Name;
+    private boolean m_Active;
     private float m_MovementSpeed; //The movement speed
     private float m_HP; // The Hp
     private float m_ScoreWorth; //How much score its worth
@@ -37,7 +38,9 @@ public class Enemy {
         this.m_Rotation = m_Rotation;
     }
 
+    public void setM_Active(boolean m_Active){this.m_Active = m_Active;}
 
+    public boolean getM_Active(){return m_Active;}
 
     public float getM_TargetPosX() {
         return m_TargetPosX;
@@ -71,7 +74,7 @@ public class Enemy {
         this.m_VelocityY = m_VelocityY;
     }
 
-    public void Init(String theName,float theMS, float theHP, float theScore, float theDamage, int theID, float newPosX, float newPosY, float theTargetX, float theTargetY)
+    public void Init(String theName,float theMS, float theHP, float theScore, float theDamage, int theID, float newPosX, float newPosY, float theTargetX, float theTargetY,boolean m_Active)
     {
         this.m_Name = theName;
         this.m_MovementSpeed = theMS;
@@ -83,6 +86,7 @@ public class Enemy {
         this.m_PosY = newPosY;
         this.m_TargetPosX = theTargetX;
         this.m_TargetPosY = theTargetY;
+        this.m_Active = m_Active;
     }
 
     public float getM_PosX() {
