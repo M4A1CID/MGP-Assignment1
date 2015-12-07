@@ -9,10 +9,11 @@ public class PlayerClass {
 
     int m_HealthPoints = 3;
     int m_Damage = 1;
-    int m_Score;
-    int m_Gold;
+    int m_Score = 0;
+    int m_Gold = 0;
     int m_Type_1_Upgrade_Level;
     int m_Type_2_Upgrade_Level;
+    int m_Gold_Multiplyer_Level = 10;
     float m_Time_Last_Attacked;
     float m_Time_Attack_Delay = 0.2f;
     float m_PosX = 0;
@@ -80,6 +81,13 @@ public class PlayerClass {
 
     public void setM_Type_2_Upgrade_Level(int m_Type_2_Upgrade_Level) {
         this.m_Type_2_Upgrade_Level = m_Type_2_Upgrade_Level;
+    }
+
+    public int getM_Gold_Multiplyer_Level(){
+        return m_Gold_Multiplyer_Level;
+    }
+    public void setM_Gold_Multiplyer_Level(int m_Gold_Multiplyer_Level){
+        this.m_Gold_Multiplyer_Level = m_Gold_Multiplyer_Level;
     }
 
     public float getM_Time_Last_Attacked() {
