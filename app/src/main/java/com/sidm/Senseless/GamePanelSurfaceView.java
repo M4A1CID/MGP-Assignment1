@@ -86,6 +86,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Adding the callback (this) to the surface holder to intercept events
         getHolder().addCallback(this);
 
+        // Init 20 bullets into the bullet hashmap
+        for(int i = 0; i < 20; ++i)
+        {
+            theBulletCount++;
+            theBullet = new Bullet();
+            String bulletID = "Bullet_";
+            bulletID += theBulletCount;
+            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0,false);
+            bulletcache.put(bulletID, theBullet);
+        }
+
+
         // 1d) Set information to get screen size
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         ScreenWidth = metrics.widthPixels;
@@ -279,13 +291,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     public void RenderBullets(Canvas canvas) {
             for (Map.Entry<String, Bullet> bulletMap2 : bulletcache.entrySet()) {
-                float BulletX = bulletMap2.getValue().getM_PosX() - (bullet.getWidth() * 0.5f);
-                float BulletY = bulletMap2.getValue().getM_PosY() - (bullet.getHeight() * 0.5f);
+                if(bulletMap2.getValue().getM_Active()) {
+                    float BulletX = bulletMap2.getValue().getM_PosX() - (bullet.getWidth() * 0.5f);
+                    float BulletY = bulletMap2.getValue().getM_PosY() - (bullet.getHeight() * 0.5f);
 
-                canvas.save();
-                canvas.rotate(bulletMap2.getValue().getM_Rotation() + 90, bulletMap2.getValue().getM_PosX(), bulletMap2.getValue().getM_PosY());
-                canvas.drawBitmap(bullet, BulletX, BulletY, null);
-                canvas.restore();
+                    canvas.save();
+                    canvas.rotate(bulletMap2.getValue().getM_Rotation() + 90, bulletMap2.getValue().getM_PosX(), bulletMap2.getValue().getM_PosY());
+                    canvas.drawBitmap(bullet, BulletX, BulletY, null);
+                    canvas.restore();
+                }
             }
     }
 
@@ -485,36 +499,42 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         float yDiff = theIT.getM_PosY() - theBullet.getM_PosY();
 
                         float theScale = bullet.getHeight();
-
-                        if ( CheckCollision(xDiff,yDiff,theScale) )
+                        if(theBullet.getM_Active()) // If the bullet is active
                         {
-                            theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
-                            bulletcache.remove(theBullet.getM_Name());
-
-                            if ( theIT.getM_HP() <= 0)
+                            if(theBullet.getM_PosX() > ScreenWidth || theBullet.getM_PosX() < 0) // Handle out of screen XY-Axis
                             {
-                                float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
-                                float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
-                                smoke_anim.setX((int) offsetX);
-                                smoke_anim.setY((int) offsetY);
-                                animcache.put(theIT.getM_Name(), smoke_anim);
+                                theBullet.setM_Active(false);
+                            }
+                            else if (theBullet.getM_PosY() > ScreenHeight || theBullet.getM_PosY() < 0)
+                            {
+                                theBullet.setM_Active(false);
+                            }
+                            if (CheckCollision(xDiff, yDiff, theScale)) {
+                                theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
+                                theBullet.setM_Active(false); // Set the bullet to false;
+                                System.out.println("Bullet Cache: " +bulletcache.size());
+                                if (theIT.getM_HP() <= 0) {
+                                    float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
+                                    float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
+                                    smoke_anim.setX((int) offsetX);
+                                    smoke_anim.setY((int) offsetY);
+                                    animcache.put(theIT.getM_Name(), smoke_anim);
 
-                                System.out.println(animcache.size());
+                                    System.out.println(animcache.size());
 
-                                thePlayer.setM_Score(thePlayer.getM_Score() + (int) theIT.getM_ScoreWorth());
-                                thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
-                                theKillCount++;
+                                    thePlayer.setM_Score(thePlayer.getM_Score() + (int) theIT.getM_ScoreWorth());
+                                    thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
+                                    theKillCount++;
 
-                                cache.remove(theIT.getM_Name());
+                                    cache.remove(theIT.getM_Name());
 
 
-
-                                //Level increase
-                               if ( theKillCount >= 20)
-                               {
-                                   theLevel++;
-                                   theKillCount = 0;
-                               }
+                                    //Level increase
+                                    if (theKillCount >= 20) {
+                                        theLevel++;
+                                        theKillCount = 0;
+                                    }
+                                }
                             }
                         }
 
@@ -538,12 +558,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
+        int action = event.getAction();
+
         // 5) In event of touch on screen, the spaceship will relocate to the point of touch
 
         short X = (short) event.getX();
         short Y = (short) event.getY();
 
-        switch (event.getAction())
+        // Doing a drag event
+        switch (action)
         {
             case MotionEvent.ACTION_DOWN:
                 HandleShopDownPress(X,Y);
@@ -552,13 +575,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
+                HandleBulletShoot(X,Y);
                 break;
 
         }
-
-
-
-        return super.onTouchEvent(event);
+        return true;
+        //return super.onTouchEvent(event);
     }
     public void HandleShopDownPress(short X, short Y)
     {
@@ -582,20 +604,30 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
          }
     }
 
-    public void HandleBulletShoot(short x, short y)
-    {
-        if ( thePlayer.getM_Time_Last_Attacked() > thePlayer.getM_Time_Attack_Delay()) {
-            theBulletCount++;
+    public void HandleBulletShoot(short x, short y) {
+        if (thePlayer.getM_Time_Last_Attacked() > thePlayer.getM_Time_Attack_Delay()) {
+            System.out.println("IM SHOOTING");
+            /*theBulletCount++;
             theBullet = new Bullet();
             String bulletID = "Bullet_";
             bulletID += theBulletCount;
-            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), x, y);
+            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), x, y,true);
 
             Iterator it = bulletcache.entrySet().iterator();
             bulletcache.put(bulletID, theBullet);
             //Reset the attack
             thePlayer.setM_Time_Last_Attacked(0);
+            */
+            for (Map.Entry<String, Bullet> bulletMap : bulletcache.entrySet()) {
+                Bullet theBullet = bulletMap.getValue();
+                if (theBullet.getM_Active() == false) {
+                    theBullet.Init(theBullet.getM_Name(), thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), x, y,true);
+                    thePlayer.setM_Time_Last_Attacked(0);
+                    break;
+                }
+            }
         }
+
     }
 
     public boolean CheckTouchCollisionImage(short inputX, short inputY, Bitmap image, float imageX, float imageY)
