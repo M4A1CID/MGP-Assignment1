@@ -96,7 +96,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0,false);
             bulletcache.put(bulletID, theBullet);
         }
+        // Init 20 enemies into the hashmap
+        for(int i = 0; i < 20; ++i)
+        {
+            theSpawnCount++;
+            enemy_Cannabis = new Enemy();
+            String temp = "Unknown_";
+            temp += theSpawnCount;
 
+            enemy_Cannabis.Init(temp,20.0f,0,0,0,0,0,0, 0,0,false);
+            cache.put(temp,enemy_Cannabis);
+        }
 
         // 1d) Set information to get screen size
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -214,52 +224,52 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
         {
             Enemy theEnemy = enemyMap.getValue();
+            if(theEnemy.getM_Active()) {
+                float theEnemyX = theEnemy.getM_PosX();
+                float theEnemyY = theEnemy.getM_PosY();
 
-            float theEnemyX = theEnemy.getM_PosX();
-            float theEnemyY = theEnemy.getM_PosY();
-
-            switch (enemyMap.getValue().getM_ID())
-            {
-                case 0:
-                    theEnemyX -= (Cannabis.getWidth() * 0.5f);
-                    theEnemyY -= (Cannabis.getHeight() * 0.5f);
-                    canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
-                    canvas.drawBitmap(Cannabis, theEnemyX, theEnemyY, null);
-                    canvas.restore();
-                    break;
-                case 1:
-                    theEnemyX -= (Cocaine.getWidth() * 0.5f);
-                    theEnemyY -= (Cocaine.getHeight() * 0.5f);
-                    canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
-                    canvas.drawBitmap(Cocaine, theEnemyX, theEnemyY, null);
-                    canvas.restore();
-                    break;
-                case 2:
-                    theEnemyX -= (Ketamine.getWidth() * 0.5f);
-                    theEnemyY -= (Ketamine.getHeight() * 0.5f);
-                    canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
-                    canvas.drawBitmap(Ketamine, theEnemyX, theEnemyY, null);
-                    canvas.restore();
-                    break;
-                case 3:
-                    theEnemyX -= (Ecstasy.getWidth() * 0.5f);
-                    theEnemyY -= (Ecstasy.getHeight() * 0.5f);
-                    canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
-                    canvas.drawBitmap(Ecstasy, theEnemyX, theEnemyY, null);
-                    canvas.restore();
-                    break;
-                case 4:
-                    theEnemyX -= (Heroin.getWidth() * 0.5f);
-                    theEnemyY -= (Heroin.getHeight() * 0.5f);
-                    canvas.save();
-                    canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
-                    canvas.drawBitmap(Heroin, theEnemyX, theEnemyY, null);
-                    canvas.restore();
-                    break;
+                switch (enemyMap.getValue().getM_ID()) {
+                    case 0:
+                        theEnemyX -= (Cannabis.getWidth() * 0.5f);
+                        theEnemyY -= (Cannabis.getHeight() * 0.5f);
+                        canvas.save();
+                        canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
+                        canvas.drawBitmap(Cannabis, theEnemyX, theEnemyY, null);
+                        canvas.restore();
+                        break;
+                    case 1:
+                        theEnemyX -= (Cocaine.getWidth() * 0.5f);
+                        theEnemyY -= (Cocaine.getHeight() * 0.5f);
+                        canvas.save();
+                        canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
+                        canvas.drawBitmap(Cocaine, theEnemyX, theEnemyY, null);
+                        canvas.restore();
+                        break;
+                    case 2:
+                        theEnemyX -= (Ketamine.getWidth() * 0.5f);
+                        theEnemyY -= (Ketamine.getHeight() * 0.5f);
+                        canvas.save();
+                        canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
+                        canvas.drawBitmap(Ketamine, theEnemyX, theEnemyY, null);
+                        canvas.restore();
+                        break;
+                    case 3:
+                        theEnemyX -= (Ecstasy.getWidth() * 0.5f);
+                        theEnemyY -= (Ecstasy.getHeight() * 0.5f);
+                        canvas.save();
+                        canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
+                        canvas.drawBitmap(Ecstasy, theEnemyX, theEnemyY, null);
+                        canvas.restore();
+                        break;
+                    case 4:
+                        theEnemyX -= (Heroin.getWidth() * 0.5f);
+                        theEnemyY -= (Heroin.getHeight() * 0.5f);
+                        canvas.save();
+                        canvas.rotate(theEnemy.getM_Rotation() - 90, theEnemy.getM_PosX(), theEnemy.getM_PosY());
+                        canvas.drawBitmap(Heroin, theEnemyX, theEnemyY, null);
+                        canvas.restore();
+                        break;
+                }
             }
         }
     }
@@ -364,66 +374,45 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         int theRandom = 0;
         String temp;
 
-        if ( theLevel != 0) {
+        if (theLevel != 0) {
             theRandom = r.nextInt(theLevel);
         }
+        for (Map.Entry<String, Enemy> enemyMap : cache.entrySet()) {
+            Enemy theIT = enemyMap.getValue();
+            if (theIT.getM_Active() == false) // If this enemy is not active
+            {
+                switch (theRandom) {
+                    case 0:
+                        theIT.Init("Cannabis", 20.0f, theLevel, theLevel, theLevel, 0,
+                                myMath.getRandom(50, ScreenWidth, ScreenHeight).xRandom, myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
+                                thePlayer.getM_PosX(), thePlayer.getM_PosY(), true);
+                        break;
+                    case 1:
+                        theIT.Init("Cocaine", 40.0f, theLevel * 2, theLevel * 2, theLevel * 2, 1,
+                                myMath.getRandom(50, ScreenWidth, ScreenHeight).xRandom, myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
+                                thePlayer.getM_PosX(), thePlayer.getM_PosY(), true);
+                        break;
+                    case 2:
 
-        switch ( theRandom )
-        {
-            case 0:
-                theSpawnCount++;
-                enemy_Cannabis = new Enemy();
-                temp = "Cannabis_";
-                temp += theSpawnCount;
-
-                enemy_Cannabis.Init(temp,20.0f,theLevel,theLevel,theLevel,0,
-                        myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
-                        thePlayer.getM_PosX(),thePlayer.getM_PosY());
-                cache.put(temp,enemy_Cannabis);
-                break;
-            case 1:
-                theSpawnCount++;
-                enemy_Cocaine = new Enemy();
-                temp = "Cocaine_";
-                temp += theSpawnCount;
-                enemy_Cocaine.Init(temp,40.0f,theLevel * 2,theLevel * 2,theLevel * 2,1,
-                        myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
-                        thePlayer.getM_PosX(),thePlayer.getM_PosY());
-                cache.put(temp,enemy_Cocaine);
-                break;
-            case 2:
-                theSpawnCount++;
-                enemy_Ketamine = new Enemy();
-                temp = "Ketamine_";
-                temp += theSpawnCount;
-                enemy_Ketamine.Init(temp,20.0f,theLevel * 2.5f,theLevel * 2.5f,theLevel * 2.5f,2,
-                        myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
-                        thePlayer.getM_PosX(),thePlayer.getM_PosY());
-                cache.put(temp,enemy_Ketamine);
-                break;
-            case 3:
-                theSpawnCount++;
-                enemy_Ecstasy = new Enemy();
-                temp = "Ecstasy_";
-                temp += theSpawnCount;
-                enemy_Ecstasy.Init(temp,60.0f,theLevel / 2,theLevel / 2,theLevel / 2,3,
-                        myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
-                        thePlayer.getM_PosX(),thePlayer.getM_PosY());
-                cache.put(temp,enemy_Ecstasy);
-                break;
-            case 4:
-                theSpawnCount++;
-                enemy_Heroin = new Enemy();
-                temp = "Heroin_";
-                temp += theSpawnCount;
-                enemy_Heroin.Init(temp,50.0f,theLevel * 1.5f,theLevel * 1.5f,theLevel * 1.5f,4,
-                        myMath.getRandom(50, ScreenWidth,ScreenHeight).xRandom,myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
-                        thePlayer.getM_PosX(),thePlayer.getM_PosY());
-                cache.put(temp,enemy_Heroin);
-                break;
+                        theIT.Init("Ketamine", 20.0f, theLevel * 2.5f, theLevel * 2.5f, theLevel * 2.5f, 2,
+                                myMath.getRandom(50, ScreenWidth, ScreenHeight).xRandom, myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
+                                thePlayer.getM_PosX(), thePlayer.getM_PosY(), true);
+                        break;
+                    case 3:
+                        theIT.Init("Ecstasy", 60.0f, theLevel / 2, theLevel / 2, theLevel / 2, 3,
+                                myMath.getRandom(50, ScreenWidth, ScreenHeight).xRandom, myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
+                                thePlayer.getM_PosX(), thePlayer.getM_PosY(), true);
+                        break;
+                    case 4:
+                        theIT.Init("Heroin", 50.0f, theLevel * 1.5f, theLevel * 1.5f, theLevel * 1.5f, 4,
+                                myMath.getRandom(50, ScreenWidth, ScreenHeight).xRandom, myMath.getRandom(50, ScreenWidth, ScreenHeight).yRandom,
+                                thePlayer.getM_PosX(), thePlayer.getM_PosY(), true);
+                        break;
+                }
+                break; // Break out of For-loop
+            }
         }
     }
-
     //Update method to update the game play
     public void update(float dt, float fps) {
         FPS = fps;
@@ -462,27 +451,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     float yDiff = thePlayer.getM_PosY() - theIT.getM_PosY();
 
                     float theScale = thePlayer.getM_PlayerScale() * 0.55f;
-
-                    if ( CheckCollision(xDiff,yDiff,theScale) )
+                    if(theIT.getM_Active()) // If the enemy is active
                     {
-                        cache.remove(theIT.getM_Name());
-                        if ( thePlayer.getM_HealthPoints() > 1) {
-                            thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
-                            thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
-                        }
-                        else
-                        {
-                            //Trigger game over
-                            //Test
-                            Intent intent = new Intent();
-                            //if(v==btn_pause)
-                            //{
-                            intent.setClass(getContext(),Mainmenu.class);
-                            //}
-                            getContext().startActivity(intent);
+                        if (CheckCollision(xDiff, yDiff, theScale)) {
+                            theIT.setM_Active(false);
+                            if (thePlayer.getM_HealthPoints() > 1) {
+                                thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
+                                thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
+                            } else {
+                                //Trigger game over
+                                //Test
+                                Intent intent = new Intent();
+                                //if(v==btn_pause)
+                                //{
+                                intent.setClass(getContext(), Mainmenu.class);
+                                //}
+                                getContext().startActivity(intent);
+                            }
                         }
                     }
-
                 }
                 //Update bullets
                 for (Map.Entry<String, Bullet> bulletMap: bulletcache.entrySet())
@@ -490,29 +477,26 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     bulletMap.getValue().update(dt);
 
                     Bullet theBullet = bulletMap.getValue();
-
-                    for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
+                    if(theBullet.getM_Active()) // If the bullet is active
                     {
+                    for (Map.Entry<String, Enemy> enemyMap: cache.entrySet()) {
                         Enemy theIT = enemyMap.getValue();
-
-                        float xDiff = theIT.getM_PosX() - theBullet.getM_PosX();
-                        float yDiff = theIT.getM_PosY() - theBullet.getM_PosY();
-
-                        float theScale = bullet.getHeight();
-                        if(theBullet.getM_Active()) // If the bullet is active
+                        if (theIT.getM_Active()) // If the enemy is active
                         {
-                            if(theBullet.getM_PosX() > ScreenWidth || theBullet.getM_PosX() < 0) // Handle out of screen XY-Axis
+                            float xDiff = theIT.getM_PosX() - theBullet.getM_PosX();
+                            float yDiff = theIT.getM_PosY() - theBullet.getM_PosY();
+
+                            float theScale = bullet.getHeight();
+
+                            if (theBullet.getM_PosX() > ScreenWidth || theBullet.getM_PosX() < 0) // Handle out of screen XY-Axis
                             {
                                 theBullet.setM_Active(false);
-                            }
-                            else if (theBullet.getM_PosY() > ScreenHeight || theBullet.getM_PosY() < 0)
-                            {
+                            } else if (theBullet.getM_PosY() > ScreenHeight || theBullet.getM_PosY() < 0) {
                                 theBullet.setM_Active(false);
                             }
                             if (CheckCollision(xDiff, yDiff, theScale)) {
                                 theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
                                 theBullet.setM_Active(false); // Set the bullet to false;
-                                System.out.println("Bullet Cache: " +bulletcache.size());
                                 if (theIT.getM_HP() <= 0) {
                                     float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
                                     float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
@@ -526,7 +510,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                     thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
                                     theKillCount++;
 
-                                    cache.remove(theIT.getM_Name());
+                                    theIT.setM_Active(false);
 
 
                                     //Level increase
@@ -535,6 +519,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                         theKillCount = 0;
                                     }
                                 }
+                            }
                             }
                         }
 
