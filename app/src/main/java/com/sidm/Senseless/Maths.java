@@ -77,12 +77,13 @@ public class Maths {
         //Attempt to prevent spawn in middle
         if ( theMath.xRandom > 0 && theMath.xRandom < theScreenW)
         {
-            theMath.xRandom = -10;
+            if ( theMath.yRandom > 0 && theMath.yRandom < theScreenH)
+            {
+                theMath.xRandom = -10;
+                theMath.yRandom = -10;
+            }
         }
-        else if ( theMath.yRandom > 0 && theMath.yRandom < theScreenH)
-        {
-            theMath.yRandom = -10;
-        }
+
 
         return theMath;
     }
