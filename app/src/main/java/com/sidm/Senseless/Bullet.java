@@ -16,6 +16,24 @@ public class Bullet {
     private float m_TargetPosX;
     private float m_TargetPosY;
     private float m_Rotation;
+    private float BulletScaleX;
+    private float BulletScaleY;
+
+    public float getBulletScaleY() {
+        return BulletScaleY;
+    }
+
+    public void setBulletScaleY(float bulletScaleY) {
+        BulletScaleY = bulletScaleY;
+    }
+
+    public float getBulletScaleX() {
+        return BulletScaleX;
+    }
+
+    public void setBulletScaleX(float bulletScaleX) {
+        BulletScaleX = bulletScaleX;
+    }
 
     Maths myMath = new Maths();
 

@@ -37,6 +37,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     ConcurrentHashMap<String,Bullet> bulletcache = new ConcurrentHashMap<String,Bullet>();
     ConcurrentHashMap<String,SpriteAnimation> animcache = new ConcurrentHashMap<String,SpriteAnimation>();
 
+    Enemy theEnemy = new Enemy();
     Enemy enemy_Cannabis = new Enemy();
     Enemy enemy_Cocaine = new Enemy();
     Enemy enemy_Ketamine = new Enemy();
@@ -57,15 +58,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private GameThread myThread = null; // Thread to control the rendering
     private Bitmap bg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen, bullet, smoke_resize, btn_back; //Bitmaps
     private float DPI, AspectRatioX, AspectRatioY;
-    private float EnemyScale = 0;
-    private float BulletScaleX;
-    private float BulletScaleY;
     private float SpawnTimer = 0;
     private final float SpawnDelay = 2.f;
-    
     public float FPS; // Variables for FPS
     private SpriteAnimation smoke_anim;
-
     private short GameState;   // Variable for Game State check
 	//Variables for shop
     private float btn_shop_Gamescale = 0.3f;
@@ -103,21 +99,22 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         bg = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
 
         //Init the enemy
-        EnemyScale  = AspectRatioY * 0.25f;
+        theEnemy.setEnemyScale( AspectRatioY * 0.25f);
         Cannabis = BitmapFactory.decodeResource(getResources(), R.drawable.cannabis);
-        Cannabis = Bitmap.createScaledBitmap(Cannabis, (int) EnemyScale, (int) EnemyScale, true);
+        Cannabis = Bitmap.createScaledBitmap(Cannabis, (int) theEnemy.getEnemyScale(), (int) theEnemy.getEnemyScale(), true);
         Cocaine = BitmapFactory.decodeResource(getResources(), R.drawable.cocaine);
-        Cocaine = Bitmap.createScaledBitmap(Cocaine, (int) EnemyScale, (int) EnemyScale, true);
+        Cocaine = Bitmap.createScaledBitmap(Cocaine, (int) theEnemy.getEnemyScale(), (int) theEnemy.getEnemyScale(), true);
         Ketamine = BitmapFactory.decodeResource(getResources(), R.drawable.ketamine);
-        Ketamine = Bitmap.createScaledBitmap(Ketamine, (int) EnemyScale, (int) EnemyScale, true);
+        Ketamine = Bitmap.createScaledBitmap(Ketamine, (int) theEnemy.getEnemyScale(), (int) theEnemy.getEnemyScale(), true);
         Ecstasy = BitmapFactory.decodeResource(getResources(), R.drawable.ecstasy);
-        Ecstasy = Bitmap.createScaledBitmap(Ecstasy, (int) EnemyScale, (int) EnemyScale, true);
+        Ecstasy = Bitmap.createScaledBitmap(Ecstasy, (int) theEnemy.getEnemyScale(), (int) theEnemy.getEnemyScale(), true);
         Heroin = BitmapFactory.decodeResource(getResources(), R.drawable.heroin);
-        Heroin = Bitmap.createScaledBitmap(Heroin, (int) EnemyScale, (int) EnemyScale, true);
-        BulletScaleX =  AspectRatioX * 0.025f;
-        BulletScaleY = AspectRatioY * 0.2f;
+        Heroin = Bitmap.createScaledBitmap(Heroin, (int) theEnemy.getEnemyScale(), (int)theEnemy.getEnemyScale(), true);
+
+        theBullet.setBulletScaleX(AspectRatioX * 0.025f);
+        theBullet.setBulletScaleY(AspectRatioY * 0.2f);
         bullet = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
-        bullet = Bitmap.createScaledBitmap(bullet, (int) BulletScaleX, (int) BulletScaleY, true);
+        bullet = Bitmap.createScaledBitmap(bullet, (int) theBullet.getBulletScaleX(), (int) theBullet.getBulletScaleY(), true);
 
         float SmokeScaleX = AspectRatioX;
         float SmokeScaleY = AspectRatioY * 0.3f;
@@ -125,16 +122,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         smoke_resize = Bitmap.createScaledBitmap(smoke_resize, (int)SmokeScaleX , (int)SmokeScaleY, true);
         smoke_anim = new SpriteAnimation(smoke_resize, 320, 64, 5, smoke_frame_count);
 
-        //Scale the bg
-        //scaledbg = Bitmap.createScaledBitmap(bg, ScreenWidth, ScreenHeight, true);
-
-        // 4c) Load the images of the spaceships
+        //Player face init
         thePlayer.PlayerFace[0] = BitmapFactory.decodeResource(getResources(), R.drawable.happy);
         thePlayer.PlayerFace[1] = BitmapFactory.decodeResource(getResources(), R.drawable.normal);
         thePlayer.PlayerFace[2] = BitmapFactory.decodeResource(getResources(), R.drawable.sad);
-
         thePlayer.setM_PlayerScale( AspectRatioY * 0.5f);
-
 
         for ( int i = 0; i < thePlayer.getPlayerArraySize(); ++i)
         {
@@ -333,9 +325,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         RenderEnemy(canvas);
         RenderSmoke(canvas);
         RenderGUI(canvas);
-
-        if(btn_shop_opened)
-            canvas.drawBitmap(btn_shopScreen,0,0,null);
     }
 
     public void spawnEnemy(float dt) {

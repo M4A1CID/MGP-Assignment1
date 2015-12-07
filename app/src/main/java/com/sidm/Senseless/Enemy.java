@@ -19,6 +19,15 @@ public class Enemy {
     private float m_VelocityX;
     private float m_VelocityY;
     private float m_Rotation;
+    private float EnemyScale;
+
+    public float getEnemyScale() {
+        return EnemyScale;
+    }
+
+    public void setEnemyScale(float enemyScale) {
+        EnemyScale = enemyScale;
+    }
 
     public float getM_Rotation() {
         return m_Rotation;
