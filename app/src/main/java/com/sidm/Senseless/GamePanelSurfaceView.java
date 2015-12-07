@@ -13,7 +13,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -26,16 +28,19 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
+public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     // Implement this interface to receive information about changes to the surface.
 
     String debugText;
     Random r = new Random();
     Paint paint = new Paint();
-    ConcurrentHashMap<String,Enemy> cache = new ConcurrentHashMap<String,Enemy>();
-    ConcurrentHashMap<String,Bullet> bulletcache = new ConcurrentHashMap<String,Bullet>();
-    ConcurrentHashMap<String,SpriteAnimation> animcache = new ConcurrentHashMap<String,SpriteAnimation>();
+    ConcurrentHashMap<String, Enemy> cache = new ConcurrentHashMap<String, Enemy>();
+    ConcurrentHashMap<String, Bullet> bulletcache = new ConcurrentHashMap<String, Bullet>();
+    ConcurrentHashMap<String, SpriteAnimation> animcache = new ConcurrentHashMap<String, SpriteAnimation>();
+
+    // Use of bibration for feedback
+    public Vibrator v;
 
     Enemy enemy_Cannabis = new Enemy();
     Enemy enemy_Cocaine = new Enemy();
@@ -55,30 +60,30 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private int theBulletCount = 0;
     private final int smoke_frame_count = 5;
     private GameThread myThread = null; // Thread to control the rendering
-    private Bitmap bg, Cannabis,Cocaine,Ketamine,Ecstasy,Heroin,btn_shop, btn_shopScreen, bullet, smoke_resize, btn_back; //Bitmaps
+    private Bitmap bg, Cannabis, Cocaine, Ketamine, Ecstasy, Heroin, btn_shop, btn_shopScreen, bullet, smoke_resize, btn_back; //Bitmaps
     private float DPI, AspectRatioX, AspectRatioY;
     private float EnemyScale = 0;
     private float BulletScaleX;
     private float BulletScaleY;
     private float SpawnTimer = 0;
     private final float SpawnDelay = 2.f;
-    
+
     public float FPS; // Variables for FPS
     private SpriteAnimation smoke_anim;
 
     private short GameState;   // Variable for Game State check
-	//Variables for shop
+    //Variables for shop
     private float btn_shop_Gamescale = 0.3f;
     private float btn_shopScreen_Gamescale = 0.5f;
-    private float btn_shop_X,btn_shop_Y;
+    private float btn_shop_X, btn_shop_Y;
     private boolean btn_shop_opened = false;
 
     //Variables for back button
     private float btn_back_X, btn_back_Y;
-    private float btn_back_Gamescale= 0.3f;
+    private float btn_back_Gamescale = 0.3f;
 
     //constructor for this GamePanelSurfaceView class
-    public GamePanelSurfaceView (Context context){
+    public GamePanelSurfaceView(Context context) {
 
         // Context is the current state of the application/object
         super(context);
@@ -87,25 +92,23 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         getHolder().addCallback(this);
 
         // Init 20 bullets into the bullet hashmap
-        for(int i = 0; i < 20; ++i)
-        {
+        for (int i = 0; i < 20; ++i) {
             theBulletCount++;
             theBullet = new Bullet();
             String bulletID = "Bullet_";
             bulletID += theBulletCount;
-            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0,false);
+            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0, false);
             bulletcache.put(bulletID, theBullet);
         }
         // Init 20 enemies into the hashmap
-        for(int i = 0; i < 20; ++i)
-        {
+        for (int i = 0; i < 20; ++i) {
             theSpawnCount++;
             enemy_Cannabis = new Enemy();
             String temp = "Unknown_";
             temp += theSpawnCount;
 
-            enemy_Cannabis.Init(temp,20.0f,0,0,0,0,0,0, 0,0,false);
-            cache.put(temp,enemy_Cannabis);
+            enemy_Cannabis.Init(temp, 20.0f, 0, 0, 0, 0, 0, 0, 0, 0, false);
+            cache.put(temp, enemy_Cannabis);
         }
 
         // 1d) Set information to get screen size
@@ -125,7 +128,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         bg = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
 
         //Init the enemy
-        EnemyScale  = AspectRatioY * 0.25f;
+        EnemyScale = AspectRatioY * 0.25f;
         Cannabis = BitmapFactory.decodeResource(getResources(), R.drawable.cannabis);
         Cannabis = Bitmap.createScaledBitmap(Cannabis, (int) EnemyScale, (int) EnemyScale, true);
         Cocaine = BitmapFactory.decodeResource(getResources(), R.drawable.cocaine);
@@ -136,7 +139,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Ecstasy = Bitmap.createScaledBitmap(Ecstasy, (int) EnemyScale, (int) EnemyScale, true);
         Heroin = BitmapFactory.decodeResource(getResources(), R.drawable.heroin);
         Heroin = Bitmap.createScaledBitmap(Heroin, (int) EnemyScale, (int) EnemyScale, true);
-        BulletScaleX =  AspectRatioX * 0.025f;
+        BulletScaleX = AspectRatioX * 0.025f;
         BulletScaleY = AspectRatioY * 0.2f;
         bullet = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
         bullet = Bitmap.createScaledBitmap(bullet, (int) BulletScaleX, (int) BulletScaleY, true);
@@ -144,7 +147,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         float SmokeScaleX = AspectRatioX;
         float SmokeScaleY = AspectRatioY * 0.3f;
         smoke_resize = BitmapFactory.decodeResource(getResources(), R.drawable.smoke);
-        smoke_resize = Bitmap.createScaledBitmap(smoke_resize, (int)SmokeScaleX , (int)SmokeScaleY, true);
+        smoke_resize = Bitmap.createScaledBitmap(smoke_resize, (int) SmokeScaleX, (int) SmokeScaleY, true);
         smoke_anim = new SpriteAnimation(smoke_resize, 320, 64, 5, smoke_frame_count);
 
         //Scale the bg
@@ -155,12 +158,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         thePlayer.PlayerFace[1] = BitmapFactory.decodeResource(getResources(), R.drawable.normal);
         thePlayer.PlayerFace[2] = BitmapFactory.decodeResource(getResources(), R.drawable.sad);
 
-        thePlayer.setM_PlayerScale( AspectRatioY * 0.5f);
+        thePlayer.setM_PlayerScale(AspectRatioY * 0.5f);
 
 
-        for ( int i = 0; i < thePlayer.getPlayerArraySize(); ++i)
-        {
-            thePlayer.PlayerFace[i] = Bitmap.createScaledBitmap(thePlayer.PlayerFace[i], (int)thePlayer.getM_PlayerScale(), (int)thePlayer.getM_PlayerScale(), true);
+        for (int i = 0; i < thePlayer.getPlayerArraySize(); ++i) {
+            thePlayer.PlayerFace[i] = Bitmap.createScaledBitmap(thePlayer.PlayerFace[i], (int) thePlayer.getM_PlayerScale(), (int) thePlayer.getM_PlayerScale(), true);
         }
 
         // Create the game loop thread
@@ -177,12 +179,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_shop = BitmapFactory.decodeResource(getResources(), R.drawable.shop);
         btn_shop = Bitmap.createScaledBitmap(btn_shop, (int) (AspectRatioY * btn_shop_Gamescale), (int) (AspectRatioY * btn_shop_Gamescale), true);
         btn_shopScreen = BitmapFactory.decodeResource(getResources(), R.drawable.shop_screen);
-        btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen,  ScreenWidth, ScreenHeight , true);
+        btn_shopScreen = Bitmap.createScaledBitmap(btn_shopScreen, ScreenWidth, ScreenHeight, true);
         btn_shop_X = ScreenWidth - btn_shop.getWidth();
         btn_shop_Y = 0;
 
         //Variable for the back button
-        btn_back = BitmapFactory.decodeResource(getResources(),R.drawable.back);
+        btn_back = BitmapFactory.decodeResource(getResources(), R.drawable.back);
         btn_back = Bitmap.createScaledBitmap(btn_back, (int) (AspectRatioY * btn_back_Gamescale), (int) (AspectRatioY * btn_back_Gamescale), true);
         btn_back_X = ScreenWidth - btn_back.getWidth();
         btn_back_Y = ScreenHeight - btn_back.getHeight();
@@ -190,18 +192,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     //must implement inherited abstract methods
-    public void surfaceCreated(SurfaceHolder holder){
+    public void surfaceCreated(SurfaceHolder holder) {
         // Create the thread
-        if (!myThread.isAlive()){
+        if (!myThread.isAlive()) {
             myThread = new GameThread(getHolder(), this);
             myThread.startRun(true);
             myThread.start();
         }
     }
 
-    public void surfaceDestroyed(SurfaceHolder holder){
+    public void surfaceDestroyed(SurfaceHolder holder) {
         // Destroy the thread
-        if (myThread.isAlive()){
+        if (myThread.isAlive()) {
             myThread.startRun(false);
         }
         boolean retry = true;
@@ -209,22 +211,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             try {
                 myThread.join();
                 retry = false;
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
             }
         }
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
     public void RenderEnemy(Canvas canvas) {
-        for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
-        {
+        for (Map.Entry<String, Enemy> enemyMap : cache.entrySet()) {
             Enemy theEnemy = enemyMap.getValue();
-            if(theEnemy.getM_Active()) {
+            if (theEnemy.getM_Active()) {
                 float theEnemyX = theEnemy.getM_PosX();
                 float theEnemyY = theEnemy.getM_PosY();
 
@@ -300,24 +299,22 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     public void RenderBullets(Canvas canvas) {
-            for (Map.Entry<String, Bullet> bulletMap2 : bulletcache.entrySet()) {
-                if(bulletMap2.getValue().getM_Active()) {
-                    float BulletX = bulletMap2.getValue().getM_PosX() - (bullet.getWidth() * 0.5f);
-                    float BulletY = bulletMap2.getValue().getM_PosY() - (bullet.getHeight() * 0.5f);
+        for (Map.Entry<String, Bullet> bulletMap2 : bulletcache.entrySet()) {
+            if (bulletMap2.getValue().getM_Active()) {
+                float BulletX = bulletMap2.getValue().getM_PosX() - (bullet.getWidth() * 0.5f);
+                float BulletY = bulletMap2.getValue().getM_PosY() - (bullet.getHeight() * 0.5f);
 
-                    canvas.save();
-                    canvas.rotate(bulletMap2.getValue().getM_Rotation() + 90, bulletMap2.getValue().getM_PosX(), bulletMap2.getValue().getM_PosY());
-                    canvas.drawBitmap(bullet, BulletX, BulletY, null);
-                    canvas.restore();
-                }
+                canvas.save();
+                canvas.rotate(bulletMap2.getValue().getM_Rotation() + 90, bulletMap2.getValue().getM_PosX(), bulletMap2.getValue().getM_PosY());
+                canvas.drawBitmap(bullet, BulletX, BulletY, null);
+                canvas.restore();
             }
+        }
     }
 
-    public void RenderSmoke(Canvas canvas)
-    {
+    public void RenderSmoke(Canvas canvas) {
         //The smoke
-        for (Map.Entry<String, SpriteAnimation> smokeMap: animcache.entrySet())
-        {
+        for (Map.Entry<String, SpriteAnimation> smokeMap : animcache.entrySet()) {
             smokeMap.getValue().draw(canvas);
         }
     }
@@ -345,17 +342,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.drawText(multiplyer, ScreenWidth - 150, 75, paint);
 
         //Draw the shop button
-        if(btn_shop_opened) { // If player pressed the shop button
+        if (btn_shop_opened) { // If player pressed the shop button
             // Render the shop screen overlay
             canvas.drawBitmap(btn_shopScreen, 1, 1, null);
-            canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y,null);
+            canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y, null);
         }
     }
 
     public void RenderGameplay(Canvas canvas) {
         // 2) Re-draw 2nd image after the 1st image ends
-        if ( canvas == null )
-        {
+        if (canvas == null) {
             return;
         }
 
@@ -366,8 +362,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         RenderSmoke(canvas);
         RenderGUI(canvas);
 
-        if(btn_shop_opened)
-            canvas.drawBitmap(btn_shopScreen,0,0,null);
+        if (btn_shop_opened)
+            canvas.drawBitmap(btn_shopScreen, 0, 0, null);
     }
 
     public void spawnEnemy(float dt) {
@@ -413,6 +409,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
         }
     }
+
     //Update method to update the game play
     public void update(float dt, float fps) {
         FPS = fps;
@@ -422,27 +419,23 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 SpawnTimer += dt;
                 thePlayer.setM_Time_Last_Attacked(thePlayer.getM_Time_Last_Attacked() + dt);
 
-                if ( SpawnTimer >= SpawnDelay )
-                {
+                if (SpawnTimer >= SpawnDelay) {
                     spawnEnemy(dt);
                     SpawnTimer = 0.0f;
                 }
 
                 //The smoke
-                for (Map.Entry<String, SpriteAnimation> smokeMap: animcache.entrySet())
-                {
+                for (Map.Entry<String, SpriteAnimation> smokeMap : animcache.entrySet()) {
                     SpriteAnimation theSmoke = smokeMap.getValue();
-                           theSmoke.update(System.currentTimeMillis());
+                    theSmoke.update(System.currentTimeMillis());
 
-                    if ( smokeMap.getValue().getCurrentFrame() >= (smoke_frame_count - 1) )
-                    {
+                    if (smokeMap.getValue().getCurrentFrame() >= (smoke_frame_count - 1)) {
                         animcache.remove(smokeMap.getKey());
                     }
                 }
 
                 //Update enemy
-                for (Map.Entry<String, Enemy> enemyMap: cache.entrySet())
-                {
+                for (Map.Entry<String, Enemy> enemyMap : cache.entrySet()) {
                     enemyMap.getValue().update(dt);
 
                     Enemy theIT = enemyMap.getValue();
@@ -451,11 +444,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     float yDiff = thePlayer.getM_PosY() - theIT.getM_PosY();
 
                     float theScale = thePlayer.getM_PlayerScale() * 0.55f;
-                    if(theIT.getM_Active()) // If the enemy is active
+                    if (theIT.getM_Active()) // If the enemy is active
                     {
                         if (CheckCollision(xDiff, yDiff, theScale)) {
                             theIT.setM_Active(false);
                             if (thePlayer.getM_HealthPoints() > 1) {
+                                startVibrate(); // Player hit, vibrate phone
                                 thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
                                 thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
                             } else {
@@ -472,54 +466,53 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
                 }
                 //Update bullets
-                for (Map.Entry<String, Bullet> bulletMap: bulletcache.entrySet())
-                {
+                for (Map.Entry<String, Bullet> bulletMap : bulletcache.entrySet()) {
                     bulletMap.getValue().update(dt);
 
                     Bullet theBullet = bulletMap.getValue();
-                    if(theBullet.getM_Active()) // If the bullet is active
+                    if (theBullet.getM_Active()) // If the bullet is active
                     {
-                    for (Map.Entry<String, Enemy> enemyMap: cache.entrySet()) {
-                        Enemy theIT = enemyMap.getValue();
-                        if (theIT.getM_Active()) // If the enemy is active
-                        {
-                            float xDiff = theIT.getM_PosX() - theBullet.getM_PosX();
-                            float yDiff = theIT.getM_PosY() - theBullet.getM_PosY();
-
-                            float theScale = bullet.getHeight();
-
-                            if (theBullet.getM_PosX() > ScreenWidth || theBullet.getM_PosX() < 0) // Handle out of screen XY-Axis
+                        for (Map.Entry<String, Enemy> enemyMap : cache.entrySet()) {
+                            Enemy theIT = enemyMap.getValue();
+                            if (theIT.getM_Active()) // If the enemy is active
                             {
-                                theBullet.setM_Active(false);
-                            } else if (theBullet.getM_PosY() > ScreenHeight || theBullet.getM_PosY() < 0) {
-                                theBullet.setM_Active(false);
-                            }
-                            if (CheckCollision(xDiff, yDiff, theScale)) {
-                                theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
-                                theBullet.setM_Active(false); // Set the bullet to false;
-                                if (theIT.getM_HP() <= 0) {
-                                    float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
-                                    float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
-                                    smoke_anim.setX((int) offsetX);
-                                    smoke_anim.setY((int) offsetY);
-                                    animcache.put(theIT.getM_Name(), smoke_anim);
+                                float xDiff = theIT.getM_PosX() - theBullet.getM_PosX();
+                                float yDiff = theIT.getM_PosY() - theBullet.getM_PosY();
 
-                                    System.out.println(animcache.size());
+                                float theScale = bullet.getHeight();
 
-                                    thePlayer.setM_Score(thePlayer.getM_Score() + (int) theIT.getM_ScoreWorth());
-                                    thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
-                                    theKillCount++;
+                                if (theBullet.getM_PosX() > ScreenWidth || theBullet.getM_PosX() < 0) // Handle out of screen XY-Axis
+                                {
+                                    theBullet.setM_Active(false);
+                                } else if (theBullet.getM_PosY() > ScreenHeight || theBullet.getM_PosY() < 0) {
+                                    theBullet.setM_Active(false);
+                                }
+                                if (CheckCollision(xDiff, yDiff, theScale)) {
+                                    theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
+                                    theBullet.setM_Active(false); // Set the bullet to false;
+                                    if (theIT.getM_HP() <= 0) {
+                                        float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
+                                        float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
+                                        smoke_anim.setX((int) offsetX);
+                                        smoke_anim.setY((int) offsetY);
+                                        animcache.put(theIT.getM_Name(), smoke_anim);
 
-                                    theIT.setM_Active(false);
+                                        System.out.println(animcache.size());
+
+                                        thePlayer.setM_Score(thePlayer.getM_Score() + (int) theIT.getM_ScoreWorth());
+                                        thePlayer.setM_Gold(thePlayer.getM_Gold() + ((int) theIT.getM_ScoreWorth() * thePlayer.getM_Gold_Multiplyer_Level()));
+                                        theKillCount++;
+
+                                        theIT.setM_Active(false);
 
 
-                                    //Level increase
-                                    if (theKillCount >= 20) {
-                                        theLevel++;
-                                        theKillCount = 0;
+                                        //Level increase
+                                        if (theKillCount >= 20) {
+                                            theLevel++;
+                                            theKillCount = 0;
+                                        }
                                     }
                                 }
-                            }
                             }
                         }
 
@@ -531,9 +524,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     // Rendering is done on Canvas
-    public void doDraw(Canvas canvas){
-        switch (GameState)
-        {
+    public void doDraw(Canvas canvas) {
+        switch (GameState) {
             case 0:
                 RenderGameplay(canvas);
                 break;
@@ -541,7 +533,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
 
         int action = event.getAction();
 
@@ -551,26 +543,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         short Y = (short) event.getY();
 
         // Doing a drag event
-        switch (action)
-        {
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
-                HandleShopDownPress(X,Y);
-                HandleBulletShoot(X,Y);
+                HandleShopDownPress(X, Y);
+                HandleBulletShoot(X, Y);
                 break;
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
-                HandleBulletShoot(X,Y);
+                HandleBulletShoot(X, Y);
                 break;
 
         }
         return true;
         //return super.onTouchEvent(event);
     }
-    public void HandleShopDownPress(short X, short Y)
-    {
-        if(!btn_shop_opened)
-            if( X > thePlayer.getM_PlayerXScale() && X < thePlayer.getM_PlayerXScale() + thePlayer.PlayerFace[thePlayer.getPlayerIndex()].getWidth()) // Check if within X + width
+
+    public void HandleShopDownPress(short X, short Y) {
+        if (!btn_shop_opened)
+            if (X > thePlayer.getM_PlayerXScale() && X < thePlayer.getM_PlayerXScale() + thePlayer.PlayerFace[thePlayer.getPlayerIndex()].getWidth()) // Check if within X + width
             {
                 if (Y > thePlayer.getM_PlayerYScale() && Y < thePlayer.getM_PlayerYScale() + thePlayer.PlayerFace[thePlayer.getPlayerIndex()].getHeight()) // Check if within Y + height
                 {
@@ -580,13 +571,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
             }
 
-        if(btn_shop_opened) // Only allow interaction with back button when shop is open
-         if( CheckTouchCollisionImage(X,Y,btn_back,btn_back_X,btn_back_Y))
-         {
-                   // Shop button is being pressed
-                    System.out.println("Back button pressed!");
-                    btn_shop_opened = false;
-         }
+        if (btn_shop_opened) // Only allow interaction with back button when shop is open
+            if (CheckTouchCollisionImage(X, Y, btn_back, btn_back_X, btn_back_Y)) {
+                // Shop button is being pressed
+                System.out.println("Back button pressed!");
+                btn_shop_opened = false;
+            }
     }
 
     public void HandleBulletShoot(short x, short y) {
@@ -606,7 +596,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             for (Map.Entry<String, Bullet> bulletMap : bulletcache.entrySet()) {
                 Bullet theBullet = bulletMap.getValue();
                 if (theBullet.getM_Active() == false) {
-                    theBullet.Init(theBullet.getM_Name(), thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), x, y,true);
+                    theBullet.Init(theBullet.getM_Name(), thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), x, y, true);
                     thePlayer.setM_Time_Last_Attacked(0);
                     break;
                 }
@@ -615,9 +605,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     }
 
-    public boolean CheckTouchCollisionImage(short inputX, short inputY, Bitmap image, float imageX, float imageY)
-    {
-        if( inputX > imageX && inputX < imageX + image.getWidth()) // Check if within X + width
+    public boolean CheckTouchCollisionImage(short inputX, short inputY, Bitmap image, float imageX, float imageY) {
+        if (inputX > imageX && inputX < imageX + image.getWidth()) // Check if within X + width
         {
             if (inputY > imageY && inputY < imageY + image.getHeight()) // Check if within Y + height
             {
@@ -627,16 +616,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
         return false;
     }
+
     public boolean CheckCollision(float xDiff, float yDiff, float theScale) {
         double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 
-        if ( theScale > distance )
-        {
+        if (theScale > distance) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
+    }
+
+    public void startVibrate() {
+        long pattern[] = {0, 200, 100};
+        v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(pattern, -1); // -1 for non-repeat
+        System.out.println("Test v");
+    }
+
+    public void stopVibrate(){
+        v.cancel();
     }
 }
