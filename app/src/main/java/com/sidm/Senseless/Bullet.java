@@ -5,7 +5,7 @@ package com.sidm.Senseless;
  */
 public class Bullet {
 
-
+    private boolean m_Active;
     private String m_Name;
     private float m_Damage;
     private float m_PosX;
@@ -16,16 +16,34 @@ public class Bullet {
     private float m_TargetPosX;
     private float m_TargetPosY;
     private float m_Rotation;
+    private float BulletScaleX;
+    private float BulletScaleY;
+
+    public float getBulletScaleY() {
+        return BulletScaleY;
+    }
+
+    public void setBulletScaleY(float bulletScaleY) {
+        BulletScaleY = bulletScaleY;
+    }
+
+    public float getBulletScaleX() {
+        return BulletScaleX;
+    }
+
+    public void setBulletScaleX(float bulletScaleX) {
+        BulletScaleX = bulletScaleX;
+    }
 
     Maths myMath = new Maths();
 
-    public String getM_Name() {
-        return m_Name;
-    }
+    public void setM_Active(boolean m_Active) {this.m_Active = m_Active;}
 
-    public float getM_Damage() {
-        return m_Damage;
-    }
+    public boolean getM_Active(){return m_Active;}
+
+    public void setM_Damage(float m_Damage){this.m_Damage = m_Damage;}
+
+    public float getM_Damage(){return m_Damage;}
 
     public float getM_Rotation() {
         return m_Rotation;
@@ -51,7 +69,7 @@ public class Bullet {
         this.m_PosX = m_PosX;
     }
 
-    public void  Init(String name,float newDamage, float newPosX, float newPosY, float newTargetX, float newTargetY )
+    public void  Init(String name,float newDamage, float newPosX, float newPosY, float newTargetX, float newTargetY, boolean m_Active )
     {
         this.m_Name = name;
         this.m_Damage = newDamage;
@@ -59,7 +77,18 @@ public class Bullet {
         this.m_PosY = newPosY;
         this.m_TargetPosX = newTargetX;
         this.m_TargetPosY = newTargetY;
-
+        this.m_Active = m_Active;
+        this.m_VelocityX = this.m_TargetPosX - this.m_PosX;
+        this.m_VelocityY = this.m_TargetPosY - this.m_PosY;
+    }
+    public void  Init(float newDamage, float newPosX, float newPosY, float newTargetX, float newTargetY, boolean m_Active )
+    {
+        this.m_Damage = newDamage;
+        this.m_PosX = newPosX;
+        this.m_PosY = newPosY;
+        this.m_TargetPosX = newTargetX;
+        this.m_TargetPosY = newTargetY;
+        this.m_Active = m_Active;
         this.m_VelocityX = this.m_TargetPosX - this.m_PosX;
         this.m_VelocityY = this.m_TargetPosY - this.m_PosY;
     }
@@ -80,5 +109,6 @@ public class Bullet {
 
         this.m_Rotation = (float)Math.toDegrees(Math.atan2(this.m_VelocityY,this.m_VelocityX));
     }
+    public String getM_Name(){ return m_Name;}
 
 }

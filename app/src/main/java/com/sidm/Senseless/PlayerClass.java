@@ -7,25 +7,24 @@ import android.graphics.Bitmap;
  */
 public class PlayerClass {
 
-    int m_HealthPoints = 3;
-    int m_Damage = 1;
-    int m_Score;
-    int m_Gold;
-    int m_Type_1_Upgrade_Level;
-    int m_Type_2_Upgrade_Level;
-    float m_Time_Last_Attacked;
-    float m_Time_Attack_Delay = 0.2f;
-    float m_PosX = 0;
-    float m_PosY = 0;
-    float m_PlayerXScale = 0;
-    float m_PlayerYScale = 0;
-    float m_PlayerScale;
+    private int m_HealthPoints = 3;
+    private int m_Damage = 1;
+    private int m_Score = 0;
+    private int m_Gold = 0;
+    private int m_Type_1_Upgrade_Level;
+    private int m_Type_2_Upgrade_Level;
+    private int m_Gold_Multiplyer_Level = 10;
+    private float m_Time_Last_Attacked;
+    private float m_Time_Attack_Delay = 0.2f;
+    private float m_PosX = 0;
+    private float m_PosY = 0;
+    private float m_PlayerXScale = 0;
+    private float m_PlayerYScale = 0;
+    private float m_PlayerScale;
+    private boolean m_IsShoot;
     private static final int PlayerArraySize = 3;
     private int PlayerIndex = PlayerArraySize - m_HealthPoints ;   //Player bitmap array count
-
-
     public Bitmap[] PlayerFace = new Bitmap[PlayerArraySize];    //Init player bitmap
-
     public float getM_Time_Attack_Delay() {
         return m_Time_Attack_Delay;
     }
@@ -80,6 +79,13 @@ public class PlayerClass {
 
     public void setM_Type_2_Upgrade_Level(int m_Type_2_Upgrade_Level) {
         this.m_Type_2_Upgrade_Level = m_Type_2_Upgrade_Level;
+    }
+
+    public int getM_Gold_Multiplyer_Level(){
+        return m_Gold_Multiplyer_Level;
+    }
+    public void setM_Gold_Multiplyer_Level(int m_Gold_Multiplyer_Level){
+        this.m_Gold_Multiplyer_Level = m_Gold_Multiplyer_Level;
     }
 
     public float getM_Time_Last_Attacked() {
@@ -142,5 +148,11 @@ public class PlayerClass {
         PlayerIndex = playerIndex;
     }
 
+    public boolean isM_IsShoot() {
+        return m_IsShoot;
+    }
 
+    public void setM_IsShoot(boolean m_IsShoot) {
+        this.m_IsShoot = m_IsShoot;
+    }
 }
