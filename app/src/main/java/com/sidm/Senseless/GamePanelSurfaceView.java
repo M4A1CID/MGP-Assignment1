@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,6 +42,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     // Use of bibration for feedback
     public Vibrator v;
+
+    MediaPlayer bgm;
 
     Enemy theEnemy = new Enemy();
     Bullet theBullet = new Bullet();
