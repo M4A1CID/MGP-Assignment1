@@ -13,7 +13,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -44,6 +46,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public Vibrator v;
     // Use of music for background
     MediaPlayer bgm;
+    // Use of sound for game
+    private SoundPool sounds;
+    private int soundcorrect,soundwrong,soundbonus;
 
     Enemy theEnemy = new Enemy();
     Bullet theBullet = new Bullet();
@@ -186,7 +191,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // Variables used for music and sound
         bgm = MediaPlayer.create(context,R.raw.background_music);
-
+        // Define Soundpool will be used
+        sounds = new SoundPool(2, AudioManager.STREAM_MUSIC,0);
+        // Load the audio file from specified
+        soundcorrect = sounds.load(context,R.raw.correct,1);
+        soundwrong = sounds.load(context,R.raw.incorrect,1);
     }
 
     //must implement inherited abstract methods
@@ -220,6 +229,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         //End background music
         bgm.stop();
         bgm.release();
+
+        // End audio file
+        sounds.unload(soundcorrect);
+        sounds.unload(soundwrong);
+        sounds.release();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -593,6 +607,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public void HandleBulletShoot(short x, short y) {
         if (thePlayer.getM_Time_Last_Attacked() > thePlayer.getM_Time_Attack_Delay()) {
             System.out.println("IM SHOOTING");
+            sounds.play(soundcorrect,1.0f,1.0f,0,0,1.5f);
             /*theBulletCount++;
             theBullet = new Bullet();
             String bulletID = "Bullet_";
