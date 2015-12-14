@@ -40,9 +40,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     ConcurrentHashMap<String, Bullet> bulletcache = new ConcurrentHashMap<String, Bullet>();
     ConcurrentHashMap<String, SpriteAnimation> animcache = new ConcurrentHashMap<String, SpriteAnimation>();
 
-    // Use of bibration for feedback
+    // Use of vibration for feedback
     public Vibrator v;
-
+    // Use of music for background
     MediaPlayer bgm;
 
     Enemy theEnemy = new Enemy();
@@ -184,6 +184,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_back_X = ScreenWidth - btn_back.getWidth();
         btn_back_Y = ScreenHeight - btn_back.getHeight();
 
+        // Variables used for music and sound
+        bgm = MediaPlayer.create(context,R.raw.background_music);
+
     }
 
     //must implement inherited abstract methods
@@ -193,6 +196,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             myThread = new GameThread(getHolder(), this);
             myThread.startRun(true);
             myThread.start();
+
+            // Start the background music
+            bgm.setVolume(0.8f,0.8f);
+            bgm.start();
         }
     }
 
@@ -209,6 +216,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             } catch (InterruptedException e) {
             }
         }
+
+        //End background music
+        bgm.stop();
+        bgm.release();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
