@@ -48,7 +48,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     MediaPlayer bgm;
     // Use of sound for game
     private SoundPool sounds;
-    private int soundcorrect,soundwrong,soundbonus;
+    private int soundcorrect,soundwrong,soundbonus,shooting,shop;
 
     Enemy theEnemy = new Enemy();
     Bullet theBullet = new Bullet();
@@ -84,6 +84,32 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private short lastX;
     private short lastY;
+
+    public void InitSoundEffects(Context context)
+    {
+        // Variables used for music and sound
+        bgm = MediaPlayer.create(context,R.raw.background_music);
+        // Define Soundpool will be used
+        sounds = new SoundPool(4, AudioManager.STREAM_MUSIC,0);
+        // Load the audio file from specified
+        soundcorrect = sounds.load(context,R.raw.correct,1);
+        soundwrong = sounds.load(context,R.raw.incorrect,1);
+        shooting = sounds.load(context,R.raw.lasershoot,1);
+        shop = sounds.load(context,R.raw.shop,1);
+    }
+    public void AudioCleanUp()
+    {
+        //End background music
+        bgm.stop();
+        bgm.release();
+
+        // End audio file
+        sounds.unload(soundcorrect);
+        sounds.unload(soundwrong);
+        sounds.unload(shop);
+        sounds.unload(shooting);
+        sounds.release();
+    }
 
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView(Context context) {
@@ -189,13 +215,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_back_X = ScreenWidth - btn_back.getWidth();
         btn_back_Y = ScreenHeight - btn_back.getHeight();
 
-        // Variables used for music and sound
-        bgm = MediaPlayer.create(context,R.raw.background_music);
-        // Define Soundpool will be used
-        sounds = new SoundPool(2, AudioManager.STREAM_MUSIC,0);
-        // Load the audio file from specified
-        soundcorrect = sounds.load(context,R.raw.correct,1);
-        soundwrong = sounds.load(context,R.raw.incorrect,1);
+        InitSoundEffects(context);
+
     }
 
     //must implement inherited abstract methods
@@ -226,14 +247,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
         }
 
-        //End background music
-        bgm.stop();
-        bgm.release();
+        AudioCleanUp();
 
-        // End audio file
-        sounds.unload(soundcorrect);
-        sounds.unload(soundwrong);
-        sounds.release();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -593,6 +608,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Shop button is being pressed
                     System.out.println("Shop button pressed!");
                     btn_shop_opened = true;
+                    sounds.play(shop,1.0f,1.0f,0,0,1.5f);
                 }
             }
 
@@ -601,13 +617,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Shop button is being pressed
                 System.out.println("Back button pressed!");
                 btn_shop_opened = false;
+                sounds.play(shop,1.0f,1.0f,0,0,1.5f);
             }
     }
 
     public void HandleBulletShoot(short x, short y) {
         if (thePlayer.getM_Time_Last_Attacked() > thePlayer.getM_Time_Attack_Delay()) {
             System.out.println("IM SHOOTING");
-            sounds.play(soundcorrect,1.0f,1.0f,0,0,1.5f);
+            sounds.play(shooting,1.0f,1.0f,0,0,1.5f);
             /*theBulletCount++;
             theBullet = new Bullet();
             String bulletID = "Bullet_";
