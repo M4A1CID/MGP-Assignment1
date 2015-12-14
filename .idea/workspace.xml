@@ -39,8 +39,31 @@
       <file leaf-file-name="GamePanelSurfaceView.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/GamePanelSurfaceView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33333334">
-              <caret line="534" column="78" selection-start-line="534" selection-start-column="78" selection-end-line="534" selection-end-column="78" />
+            <state vertical-scroll-proportion="0.7896175">
+              <caret line="643" column="35" selection-start-line="643" selection-start-column="35" selection-end-line="643" selection-end-column="35" />
+              <folding>
+                <element signature="method#GamePanelSurfaceView#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#surfaceDestroyed#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#surfaceChanged#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#RenderTiledBackground#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#RenderBullets#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#RenderSmoke#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#RenderGUI#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#RenderPauseButton#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#spawnEnemy#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#CheckTouchCollisionImage#0;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#CheckTouchCollisionImage#1;class#GamePanelSurfaceView#0" expanded="false" />
+                <element signature="method#CheckCollision#0;class#GamePanelSurfaceView#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Objects.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/Objects.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="18" column="19" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -57,6 +80,13 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="GradleLocalSettings">
     <option name="availableProjects">
@@ -1489,6 +1519,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/Objects.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/GamePanelSurfaceView.java" />
       </list>
     </option>
@@ -1762,7 +1793,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1801,7 +1832,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -1809,7 +1842,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="630" column="37" selection-start-line="630" selection-start-column="37" selection-end-line="630" selection-end-column="37" />
-          <folding />
+          <folding>
+            <element signature="method#GamePanelSurfaceView#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#surfaceDestroyed#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#surfaceChanged#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderTiledBackground#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderBullets#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderSmoke#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderGUI#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderPauseButton#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#spawnEnemy#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckTouchCollisionImage#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckTouchCollisionImage#1;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckCollision#0;class#GamePanelSurfaceView#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1829,11 +1875,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/pause.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/Objects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="18" column="19" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/sidm/Senseless/GamePanelSurfaceView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="534" column="78" selection-start-line="534" selection-start-column="78" selection-end-line="534" selection-end-column="78" />
-          <folding />
+        <state vertical-scroll-proportion="0.7896175">
+          <caret line="643" column="35" selection-start-line="643" selection-start-column="35" selection-end-line="643" selection-end-column="35" />
+          <folding>
+            <element signature="method#GamePanelSurfaceView#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#surfaceDestroyed#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#surfaceChanged#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderTiledBackground#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderBullets#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderSmoke#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderGUI#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#RenderPauseButton#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#spawnEnemy#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckTouchCollisionImage#0;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckTouchCollisionImage#1;class#GamePanelSurfaceView#0" expanded="false" />
+            <element signature="method#CheckCollision#0;class#GamePanelSurfaceView#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
