@@ -614,9 +614,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Doing a drag event
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                HandlePauseDownPress(X, Y);
                 HandleShopDownPress(X, Y);
                 HandleBulletShoot(X, Y);
-                HandlePauseDownPress(X,Y);
                 break;
             case MotionEvent.ACTION_UP:
                 thePlayer.setM_IsShoot(false);
