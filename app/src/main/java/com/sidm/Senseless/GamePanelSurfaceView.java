@@ -44,11 +44,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     // Use of vibration for feedback
     public Vibrator v;
-    // Use of music for background
-    MediaPlayer bgm;
-    // Use of sound for game
-    private SoundPool sounds;
-    private int soundcorrect,soundwrong,soundbonus,shooting,shop;
+
 
     Enemy theEnemy = new Enemy();
     Bullet theBullet = new Bullet();
@@ -85,6 +81,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short lastX;
     private short lastY;
 
+    // Use of music for background
+    MediaPlayer bgm;
+    // Use of sound for game
+    private SoundPool sounds;
+    private int soundcorrect,soundwrong,soundbonus,shooting,shop,explosion,enemyhurt;
     public void InitSoundEffects(Context context)
     {
         // Variables used for music and sound
@@ -96,6 +97,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         soundwrong = sounds.load(context,R.raw.incorrect,1);
         shooting = sounds.load(context,R.raw.lasershoot,1);
         shop = sounds.load(context,R.raw.shop,1);
+        explosion = sounds.load(context,R.raw.explosion,1);
+        enemyhurt = sounds.load(context,R.raw.enemyhurt,1);
     }
     public void AudioCleanUp()
     {
@@ -108,6 +111,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         sounds.unload(soundwrong);
         sounds.unload(shop);
         sounds.unload(shooting);
+        sounds.unload(explosion);
+        sounds.unload(enemyhurt);
         sounds.release();
     }
 
@@ -482,9 +487,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     float theScale = thePlayer.getM_PlayerScale() * 0.55f;
                     if (theIT.getM_Active()) // If the enemy is active
                     {
-                        if (CheckCollision(xDiff, yDiff, theScale)) {
+                        if (CheckCollision(xDiff, yDiff, theScale)) { // If hit player
                             theIT.setM_Active(false);
                             startVibrate(); // Player hit, vibrate phone
+                            sounds.play(explosion,1.0f,1.0f,0,0,1.5f);
                             if (thePlayer.getM_HealthPoints() > 1) {
                                 thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
                                 thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
@@ -526,6 +532,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                 if (CheckCollision(xDiff, yDiff, theScale)) {
                                     theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
                                     theBullet.setM_Active(false); // Set the bullet to false;
+                                    sounds.play(enemyhurt,1.0f,1.0f,0,0,1.5f);
                                     if (theIT.getM_HP() <= 0) {
                                         float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
                                         float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
@@ -540,6 +547,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                         theKillCount++;
 
                                         theIT.setM_Active(false);
+                                        sounds.play(explosion, 1.0f, 1.0f, 0, 0, 1.5f);
 
 
                                         //Level increase
