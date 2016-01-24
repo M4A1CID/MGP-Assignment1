@@ -13,6 +13,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -39,8 +42,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     ConcurrentHashMap<String, Bullet> bulletcache = new ConcurrentHashMap<String, Bullet>();
     ConcurrentHashMap<String, SpriteAnimation> animcache = new ConcurrentHashMap<String, SpriteAnimation>();
 
-    // Use of bibration for feedback
+    // Use of vibration for feedback
     public Vibrator v;
+
 
     Enemy theEnemy = new Enemy();
     Bullet theBullet = new Bullet();
@@ -77,6 +81,68 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short lastX;
     private short lastY;
 
+    // Pause button state
+    private boolean pausepress = false;
+    private Objects PauseB1;
+
+    // Use of music for background
+    MediaPlayer bgm;
+    // Use of sound for game
+    private SoundPool sounds;
+    private int soundcorrect,soundwrong,soundbonus,shooting,shop,explosion,enemyhurt;
+    public void InitSoundEffects(Context context)
+    {
+        // Variables used for music and sound
+        bgm = MediaPlayer.create(context,R.raw.background_music);
+        // Define Soundpool will be used
+        sounds = new SoundPool(4, AudioManager.STREAM_MUSIC,0);
+        // Load the audio file from specified
+        soundcorrect = sounds.load(context,R.raw.correct,1);
+        soundwrong = sounds.load(context,R.raw.incorrect,1);
+        shooting = sounds.load(context,R.raw.lasershoot,1);
+        shop = sounds.load(context,R.raw.shop,1);
+        explosion = sounds.load(context,R.raw.explosion,1);
+        enemyhurt = sounds.load(context,R.raw.enemyhurt,1);
+    }
+    public void AudioCleanUp()
+    {
+        //End background music
+        bgm.stop();
+        bgm.release();
+
+        // End audio file
+        sounds.unload(soundcorrect);
+        sounds.unload(soundwrong);
+        sounds.unload(shop);
+        sounds.unload(shooting);
+        sounds.unload(explosion);
+        sounds.unload(enemyhurt);
+        sounds.release();
+    }
+    public void InitBullets()
+    { // Init 20 bullets into the bullet hashmap
+        for (int i = 0; i < 20; ++i) {
+            theBulletCount++;
+            theBullet = new Bullet();
+            String bulletID = "Bullet_";
+            bulletID += theBulletCount;
+            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0, false);
+            bulletcache.put(bulletID, theBullet);
+        }
+
+    }
+    public void InitEnemies()
+    {
+        for (int i = 0; i < 20; ++i) {
+            theSpawnCount++;
+            theEnemy = new Enemy();
+            String temp = "Unknown_";
+            temp += theSpawnCount;
+
+            theEnemy.Init(temp, 20.0f, 0, 0, 0, 0, 0, 0, 0, 0, false);
+            cache.put(temp, theEnemy);
+        }
+    }
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView(Context context) {
 
@@ -87,24 +153,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         getHolder().addCallback(this);
 
         // Init 20 bullets into the bullet hashmap
-        for (int i = 0; i < 20; ++i) {
-            theBulletCount++;
-            theBullet = new Bullet();
-            String bulletID = "Bullet_";
-            bulletID += theBulletCount;
-            theBullet.Init(bulletID, thePlayer.getM_Damage(), thePlayer.getM_PosX(), thePlayer.getM_PosY(), 0, 0, false);
-            bulletcache.put(bulletID, theBullet);
-        }
+       InitBullets();
         // Init 20 enemies into the hashmap
-        for (int i = 0; i < 20; ++i) {
-            theSpawnCount++;
-            theEnemy = new Enemy();
-            String temp = "Unknown_";
-            temp += theSpawnCount;
-
-            theEnemy.Init(temp, 20.0f, 0, 0, 0, 0, 0, 0, 0, 0, false);
-            cache.put(temp, theEnemy);
-        }
+       InitEnemies();
 
         // 1d) Set information to get screen size
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -181,6 +232,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         btn_back_X = ScreenWidth - btn_back.getWidth();
         btn_back_Y = ScreenHeight - btn_back.getHeight();
 
+        //Load Pause button images
+        PauseB1 = new Objects(BitmapFactory.decodeResource(getResources(),R.drawable.pause),72,72);
+        PauseB1.setBitmap(Bitmap.createScaledBitmap(PauseB1.getBitmap(),(int) (AspectRatioY * 0.3f),(int) (AspectRatioY * 0.3f),true));
+        InitSoundEffects(context);
+
     }
 
     //must implement inherited abstract methods
@@ -190,6 +246,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             myThread = new GameThread(getHolder(), this);
             myThread.startRun(true);
             myThread.start();
+
+            // Start the background music
+            bgm.setVolume(0.8f,0.8f);
+            bgm.start();
         }
     }
 
@@ -206,6 +266,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             } catch (InterruptedException e) {
             }
         }
+
+        AudioCleanUp();
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -339,8 +402,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             canvas.drawBitmap(btn_shopScreen, 1, 1, null);
             canvas.drawBitmap(btn_back, btn_back_X, btn_back_Y, null);
         }
+
+        RenderPauseButton(canvas);
     }
 
+    public void RenderPauseButton(Canvas canvas)
+    {
+        //Draw the pause button
+        canvas.drawBitmap(PauseB1.getBitmap(),PauseB1.getX(),PauseB1.getY(),null);
+    }
     public void RenderGameplay(Canvas canvas) {
         // 2) Re-draw 2nd image after the 1st image ends
         if (canvas == null) {
@@ -439,9 +509,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     float theScale = thePlayer.getM_PlayerScale() * 0.55f;
                     if (theIT.getM_Active()) // If the enemy is active
                     {
-                        if (CheckCollision(xDiff, yDiff, theScale)) {
+                        if (CheckCollision(xDiff, yDiff, theScale)) { // If hit player
                             theIT.setM_Active(false);
                             startVibrate(); // Player hit, vibrate phone
+                            sounds.play(explosion,1.0f,1.0f,0,0,1.5f);
                             if (thePlayer.getM_HealthPoints() > 1) {
                                 thePlayer.setM_HealthPoints(thePlayer.getM_HealthPoints() - 1);
                                 thePlayer.setPlayerIndex(thePlayer.getPlayerArraySize() - thePlayer.getM_HealthPoints());
@@ -483,6 +554,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                 if (CheckCollision(xDiff, yDiff, theScale)) {
                                     theIT.setM_HP(theIT.getM_HP() - theBullet.getM_Damage());
                                     theBullet.setM_Active(false); // Set the bullet to false;
+                                    sounds.play(enemyhurt, 1.0f, 1.0f, 0, 0, 1.5f);
                                     if (theIT.getM_HP() <= 0) {
                                         float offsetX = theIT.getM_PosX() - (smoke_anim.getSpriteWidth() * 0.5f);
                                         float offsetY = theIT.getM_PosY() - (smoke_anim.getSpriteHeight() * 0.5f);
@@ -497,6 +569,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                         theKillCount++;
 
                                         theIT.setM_Active(false);
+                                        sounds.play(explosion, 1.0f, 1.0f, 0, 0, 1.5f);
 
 
                                         //Level increase
@@ -541,6 +614,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Doing a drag event
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                HandlePauseDownPress(X, Y);
                 HandleShopDownPress(X, Y);
                 HandleBulletShoot(X, Y);
                 break;
@@ -555,6 +629,23 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return true;
         //return super.onTouchEvent(event);
     }
+    public void HandlePauseDownPress(short X, short Y)
+    {
+        if(CheckTouchCollisionImage(X,Y,PauseB1))
+        {
+            System.out.println("PauseButton is pressed!");
+            if(!pausepress) {
+                pausepress = true;
+                myThread.pause();
+                bgm.pause();
+            }
+            else {
+                pausepress = false;
+                myThread.unPause();
+                bgm.start();
+            }
+        }
+    }
 
     public void HandleShopDownPress(short X, short Y) {
         if (!btn_shop_opened)
@@ -565,6 +656,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Shop button is being pressed
                     System.out.println("Shop button pressed!");
                     btn_shop_opened = true;
+                    sounds.play(shop,1.0f,1.0f,0,0,1.5f);
                 }
             }
 
@@ -573,12 +665,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Shop button is being pressed
                 System.out.println("Back button pressed!");
                 btn_shop_opened = false;
+                sounds.play(shop,1.0f,1.0f,0,0,1.5f);
             }
     }
 
     public void HandleBulletShoot(short x, short y) {
         if (thePlayer.getM_Time_Last_Attacked() > thePlayer.getM_Time_Attack_Delay()) {
             System.out.println("IM SHOOTING");
+            sounds.play(shooting,1.0f,1.0f,0,0,1.5f);
             /*theBulletCount++;
             theBullet = new Bullet();
             String bulletID = "Bullet_";
@@ -606,6 +700,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         if (inputX > imageX && inputX < imageX + image.getWidth()) // Check if within X + width
         {
             if (inputY > imageY && inputY < imageY + image.getHeight()) // Check if within Y + height
+            {
+                // image is being pressed
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean CheckTouchCollisionImage(short inputX, short inputY, Objects image) {
+        if (inputX > image.getX() && inputX < image.getX() + image.getWidth()) // Check if within X + width
+        {
+            if (inputY > image.getY() && inputY < image.getY() + image.getHeight()) // Check if within Y + height
             {
                 // image is being pressed
                 return true;
